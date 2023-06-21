@@ -19,7 +19,7 @@ export default function HeroBanner() {
                         An Industrial Take on Streetwear
                     </h1>
                     <p className='font-inconsolata lg:text-base text-[14px] md:text-[16px] pr-[60px]'>
-                        Anyone can beat you but no one can beat your outfil as long as you wear Dine Outfits
+                        Anyone can beat you but no one can beat your outfit as long as you wear Dine Outfits
                     </p>
                     <div>
                         <button className=' py-4 md:py-5 px-10 md:px-24  bg-black'>
