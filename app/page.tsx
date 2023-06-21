@@ -1,9 +1,12 @@
 import Image from 'next/image'
+import HeroBanner from './components/HeroBanner'
+import Promotion from './components/Promotion'
 
 export default function Home() {
   return (
     <main>
-      Hello
+      <HeroBanner />
+      <Promotion />
     </main>
   )
 }
