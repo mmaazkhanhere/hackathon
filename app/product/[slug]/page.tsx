@@ -1,10 +1,14 @@
 'use client'
 
+import { getProduct } from '@/app/utils/getProduct'
+import { urlForImage } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-export default function Product() {
+
+
+export default async function Product({ params }: { params: { slug: string } }) {
 
     const [quantity, setQuantity] = useState<number>(1);
 
@@ -16,17 +20,20 @@ export default function Product() {
         setQuantity(quantity - 1)
     };
 
+    const data = await getProduct(params.slug);
+    console.log(data)
+
     return (
         <main className='sm:max-w-[450px] md:max-w-[950px] lg:max-w-[1400px] mt-[100px] px-4 md:px-10 mx-auto
         bg-[#fdfdfc]'>
             <section className='grid md:grid-cols-1 lg:grid-cols-2 gap-y-10 lg:gap-x-[400px]'>
                 <div className=' md:w-[700px] lg:w-[800px] flex items-start justify-center'>
                     <div className='mr-[10px] md:mr-[20px] lg:mr-[30px]' >
-                        <Image src="/Product1.png" alt='Brushed Raglan Sweatshirt' width={100} height={100}
+                        <Image src={urlForImage(data.image).url()} alt={data.name} width={100} height={100}
                             className='object-cover' />
                     </div>
                     <div className='w-full'>
-                        <Image src="/Product1.png" alt="Brushed Raglan Sweatshirt" width={900} height={900}
+                        <Image src={urlForImage(data.image).url()} alt={data.name} width={900} height={900}
                             className="object-cover w-full" />
 
                     </div>
@@ -34,10 +41,10 @@ export default function Product() {
                 <div className='p-10  pl-4 flex flex-col gap-y-4'>
                     <div className='flex flex-col items-start justify-center leading-[26px]'>
                         <h1 className=' font-arimo text-[28px] font-medium tracking-[2px]'>
-                            Brushed Raglan Sweatshirt
+                            {data.name}
                         </h1>
                         <span className=' text-gray-300 font-inconsolata font-bold text-[22px]'>
-                            Sweater
+                            {data.sub_cat}
                         </span>
                     </div>
                     <div className='flex flex-col items-start justify-center gap-y-2'>
@@ -70,7 +77,7 @@ export default function Product() {
                             Add to Cart
                         </button>
                         <span className='text-[22px] font-bold font-inconsolata'>
-                            $195. 00
+                            {data.price}
                         </span>
                     </div>
                 </div>
@@ -97,12 +104,7 @@ export default function Product() {
                             Products Details
                         </h1>
                         <p className='text-justify'>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                            ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                            sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                            est laborum.
+                            {data.product_info}
                         </p>
                     </div>
                     <div className='flex flex-col md:flex-row items-start justify-center md:gap-x-[90px] 
