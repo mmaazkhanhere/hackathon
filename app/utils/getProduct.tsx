@@ -10,12 +10,12 @@ interface IProduct {
 }
 
 
-export const getProduct = async (slug: string) => {
+export const getProduct = async (slug: string): Promise<IProduct> => {
   try {
     const query = `*[_type=="product"&& slug.current=="${slug}"]{
-  name,
-  price,
-  image,
+    name,
+    price,
+    image,
     sub_cat,
     product_info
 }`;
@@ -25,5 +25,5 @@ export const getProduct = async (slug: string) => {
 
     // Return the fetched data
     return data[0];
-  } catch (error) { throw error }
+  } catch (error) { throw new Error('Cannot fetch product') }
 };

@@ -5,10 +5,18 @@ import { urlForImage } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import { Image as IImage } from 'sanity'
+
+interface IProduct {
+    name: string;
+    sub_cat: string;
+    price: number;
+    image: IImage;
+    product_info: string;
+}
 
 
-
-export default async function Product({ params }: { params: { slug: string } }) {
+export default function Product({ params }: { params: { slug: string } }) {
 
     const [quantity, setQuantity] = useState<number>(1);
 
@@ -20,8 +28,27 @@ export default async function Product({ params }: { params: { slug: string } }) 
         setQuantity(quantity - 1)
     };
 
-    const data = await getProduct(params.slug);
-    console.log(data)
+    const [data, setData] = useState<IProduct | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const productData = await getProduct(params.slug);
+                setData(productData);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    }, [params.slug]);
+
+
+    if (data === null) {
+        return <div className='w-full h-screen flex items-center justify-center'>
+            <Image src="/Logo.webp" alt='Logo Picture' width={200} height={200} />
+        </div>;
+    }
 
     return (
         <main className='sm:max-w-[450px] md:max-w-[950px] lg:max-w-[1400px] mt-[100px] px-4 md:px-10 mx-auto
@@ -77,7 +104,7 @@ export default async function Product({ params }: { params: { slug: string } }) 
                             Add to Cart
                         </button>
                         <span className='text-[22px] font-bold font-inconsolata'>
-                            {data.price}
+                            $ {data.price * quantity}.00
                         </span>
                     </div>
                 </div>
