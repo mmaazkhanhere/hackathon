@@ -16,16 +16,23 @@ const initialState: CartState = {
     cartItems: [],
 };
 
-export const cartSlice = createSlice({
+const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
         addToCart: (state, action: PayloadAction<ICartItem>) => {
-            state.cartItems.push(action.payload)
-        }
-    }
-})
+            state.cartItems.push(action.payload);
+        },
+        removeFromCart: (state, action: PayloadAction<string>) => {
+            state.cartItems = state.cartItems.filter(
+                (item) => item.name !== action.payload
+            );
+        },
+    },
+});
 
-export const { addToCart } = cartSlice.actions;
-export const selectItem = (state: RootState) => state.cart.cartItems
-export default cartSlice.reducer
+export const { addToCart, removeFromCart } = cartSlice.actions;
+
+export const selectCartItems = (state: RootState) => state.cart;
+
+export default cartSlice.reducer;

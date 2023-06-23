@@ -3,13 +3,12 @@
 import { getProduct } from '@/app/utils/getProduct'
 import { urlForImage } from '@/sanity/lib/image'
 import Image from 'next/image'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { Image as IImage } from 'sanity'
 import { addToCart } from '@/app/store/cartSlice'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 
 
 interface IProduct {
@@ -23,19 +22,10 @@ interface IProduct {
 
 export default function Product({ params }: { params: { slug: string } }) {
 
-    const [quantity, setQuantity] = useState<number>(1);
-
-    const addQuantity = () => {
-        setQuantity(quantity + 1);
-    }
-
-    const removeQuantity = () => {
-        setQuantity(quantity - 1)
-    };
-
     const [data, setData] = useState<IProduct | null>(null);
 
-    //const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -64,7 +54,7 @@ export default function Product({ params }: { params: { slug: string } }) {
             hideProgressBar: false,
             draggable: true,
             closeOnClick: true,
-            theme: 'dark'
+            theme: 'colored'
         });
     };
 
@@ -105,29 +95,20 @@ export default function Product({ params }: { params: { slug: string } }) {
                                 <div className='p-3 hover:shadow-xl rounded-full cursor-pointer hover:bg-white'>XL</div>
                             </div>
                         </div>
-                        <div className='flex items-center justify-start gap-x-4'>
-                            <span className='font-bold font-inconsolata'>Quantity:  </span>
-                            <button className=' bg-gray-200 p-2 cursor-pointer rounded-full hover:bg-[#fdfdfc] hover:border 
-                        hover:border-black'
-                                onClick={removeQuantity}
-                                disabled={quantity == 1}>
-                                -
-                            </button>
-                            <span className='font-medium'>{quantity}</span>
-                            <button className=' bg-gray-200 p-2 cursor-pointer rounded-full hover:bg-[#fdfdfc] 
-                        hover:border hover:border-black'
-                                onClick={addQuantity}>
-                                +
-                            </button>
-                        </div>
+
                         <div className='flex items-center justify-start gap-x-4'>
                             <button className='bg-black text-white px-8 py-2'
-                                onClick={notify}>
+                                onClick={() => {
+                                    dispatch(
+                                        addToCart({ ...data })
+                                    );
+                                    notify();
+                                }}>
                                 Add to Cart
                             </button>
 
                             <span className='text-[22px] font-bold font-inconsolata'>
-                                $ {data.price * quantity}.00
+                                $ {data.price}.00
                             </span>
                         </div>
                     </div>

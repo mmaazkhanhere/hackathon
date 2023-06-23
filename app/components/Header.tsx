@@ -2,11 +2,13 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import React, {useState } from 'react'
+import React, { useState } from 'react'
+import { useAppSelector } from '../store/hooks'
 
 
 export default function Header() {
 
+    const cartItems = useAppSelector((state) => state.cart.cartItems)
 
     const [menu, setMenu] = useState(false);
 
@@ -44,9 +46,11 @@ export default function Header() {
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 8 8"><path fill="currentColor" d="M.34 1A.506.506 0 0 0 .5 2H2l.09.25l.41 1.25l.41 1.25c.04.13.21.25.34.25h3.5c.14 0 .3-.12.34-.25l.81-2.5c.04-.13-.02-.25-.16-.25H3.3l-.38-.72A.5.5 0 0 0 2.48 1h-2a.5.5 0 0 0-.09 0a.5.5 0 0 0-.06 0zM3.5 6c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5zm3 0c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5z" />
                             </svg>
                         </div>
-                        <span className='absolute text-white bg-red-500 rounded-full p-[3px] text-[10px] -top-4 left-5'>
-                            0
-                        </span>
+                        {cartItems.length > 0 &&
+                            <span className='absolute text-white bg-red-500 rounded-full p-[3px] text-[10px] -top-4 left-5'>
+                                {cartItems.length}
+                            </span>
+                        }
                     </div>
                 </Link>
             </nav>
