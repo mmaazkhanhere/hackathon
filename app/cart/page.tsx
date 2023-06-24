@@ -1,11 +1,13 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import CartItem from '../components/CartItem'
 
 import Link from 'next/link'
 import Image from 'next/image'
 import { useAppSelector } from '../store/hooks'
+import getStripePromise from '../lib/stripe'
+
 
 
 export default function Cart() {
@@ -19,7 +21,21 @@ export default function Cart() {
     }, [cartList]);
 
 
-    //console.log(subTotal)
+    const handleCheckout = async () => {
+        const stripe = await getStripePromise();
+        const response = await fetch('/api/stripe-session/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            cache: 'no-cache',
+            body: JSON.stringify(cartList),
+        });
+
+        const data = await response.json();
+        if (data.session) {
+            stripe?.redirectToCheckout({ sessionId: data.session.id });
+        }
+    };
+
 
     return (
         <main className='sm:max-w-[450px] md:max-w-[950px] lg:max-w-[1400px] mt-[100px] px-6 md:px-10 mx-auto'>
@@ -47,7 +63,8 @@ export default function Cart() {
                                     <span>Sub Total</span>
                                     <span className='font-bold'>{subTotal} $</span>
                                 </div>
-                                <button className='bg-black text-white py-3 font-inconsolata rounded-lg'>
+                                <button className='bg-black text-white py-3 font-inconsolata rounded-lg'
+                                    onClick={handleCheckout}>
                                     Process to Checkout
                                 </button>
                             </div>
