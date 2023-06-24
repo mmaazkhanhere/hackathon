@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import CartItem from '../components/CartItem'
 
 import Link from 'next/link'
@@ -10,7 +10,16 @@ import { useAppSelector } from '../store/hooks'
 
 export default function Cart() {
 
-    const cartList = useAppSelector((state) => state.cart.cartItems)
+    const cartList = useAppSelector((state) => state.cart.cartItems);
+
+    const subTotal = useMemo(() => {
+        return cartList.reduce((total, val) => {
+            return total + val.price;
+        }, 0);
+    }, [cartList]);
+
+
+    //console.log(subTotal)
 
     return (
         <main className='sm:max-w-[450px] md:max-w-[950px] lg:max-w-[1400px] mt-[100px] px-6 md:px-10 mx-auto'>
@@ -19,22 +28,26 @@ export default function Cart() {
                     <h1 className='font-bold font-arimo text-4xl '>Shopping Cart</h1>
                     <div className='flex flex-col lg:flex-row lg:items-start '>
                         <section className='flex flex-col mt-[50px] gap-y-6 lg:w-[80%]'>
-                            <CartItem />
-                            <CartItem />
-                            <CartItem />
+                            {cartList.map((item) => (
+                                <CartItem item={item} key={item.name} />
+                            ))}
                         </section>
                         <section className=' bg-[#fdfdfd] mt-[50px] lg:w-[30%]'>
                             <div className='flex flex-col items-between gap-y-6'>
                                 <h1 className='font-bold font-arimo text-[20px]'>Order Summary</h1>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
-                                    <span>Quantity</span>
-                                    <span>2 Products</span>
+                                    <span>Total Products</span>
+                                    <span>{cartList.length} Product</span>
+                                </div>
+                                <div className='flex items-center justify-between font-arimo gap-x-6'>
+                                    <span>Total Quantities</span>
+                                    <span>{cartList.reduce((total, item) => total + item.quantity, 0)} Items</span>
                                 </div>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
                                     <span>Sub Total</span>
-                                    <span>$ 195</span>
+                                    <span className='font-bold'>{subTotal} $</span>
                                 </div>
-                                <button className='bg-black text-white py-2 font-inconsolata'>
+                                <button className='bg-black text-white py-3 font-inconsolata rounded-lg'>
                                     Process to Checkout
                                 </button>
                             </div>

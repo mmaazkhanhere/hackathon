@@ -24,6 +24,8 @@ export default function Product({ params }: { params: { slug: string } }) {
 
     const [data, setData] = useState<IProduct | null>(null);
 
+    const quantity = 1
+
     const dispatch = useAppDispatch();
 
 
@@ -100,7 +102,7 @@ export default function Product({ params }: { params: { slug: string } }) {
                             <button className='bg-black text-white px-8 py-2'
                                 onClick={() => {
                                     dispatch(
-                                        addToCart({ ...data })
+                                        addToCart({ ...data, quantity, oneQuantityPrice: data.price })
                                     );
                                     notify();
                                 }}>

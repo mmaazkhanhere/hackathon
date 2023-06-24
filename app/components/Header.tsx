@@ -10,6 +10,7 @@ export default function Header() {
 
     const cartItems = useAppSelector((state) => state.cart.cartItems)
 
+
     const [menu, setMenu] = useState(false);
 
     const handleMenuShow = () => {

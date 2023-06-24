@@ -2,36 +2,54 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
-
+import React, { useState, FC } from 'react'
+import { Image as IImage } from 'sanity'
 
 import { RiDeleteBin6Line } from 'react-icons/ri'
+import { urlForImage } from '@/sanity/lib/image'
 
-export default function CartItem() {
+import { removeFromCart } from '../store/cartSlice'
+import { useAppDispatch } from '../store/hooks'
+import { updateCart } from '@/app/store/cartSlice'
+
+interface Product {
+    name: string,
+    sub_cat: string,
+    image: IImage
+    price: number,
+    quantity: number,
+    oneQuantityPrice: number
+}
+
+const CartItem: FC<{ item: Product }> = ({ item }) => {
 
 
-    const [quantity, setQuantity] = useState<number>(1);
+    const [quantity, setQuantity] = useState<number>(item.quantity);
+
+    const dispatch = useAppDispatch();
 
     const addQuantity = () => {
         setQuantity(quantity + 1);
+        dispatch(updateCart({ ...item, quantity: quantity + 1 }));
     }
 
     const removeQuantity = () => {
         setQuantity(quantity - 1)
+        dispatch(updateCart({ ...item, quantity: quantity - 1 }));
     };
 
     return (
         <section className='flex flex-col md:flex-row items-start md:items-center justify-center md:justify-start 
         sm:max-w-[620px] md:max-w-[720px] lg:max-w-[920px] md:gap-x-4'>
             <div className='mb-[20px] lg:mb-0'>
-                <Image src="/Product1.png" alt="Product Image" height={200} width={200}
+                <Image src={urlForImage(item.image).url()} alt={item.name} height={200} width={200}
                     className='lg:w-[190px] md:w-[200px]' />
             </div>
             <div className='flex items-start justify-between w-full'>
                 <div className='flex flex-col items-start justify-center md:gap-y-[2px] lg:gap-y-2'>
-                    <h1 className='font-bold text-[20px] font-arimo'>Raglan Sweatshirt</h1>
+                    <h1 className='font-bold text-[20px] font-arimo'>{item.name}</h1>
                     <span className='font-bold tracking-tighter text-gray-500'>
-                        Dress
+                        {item.sub_cat}
                     </span>
                     <p className='lg:font-bold font-inconsolata flex flex-col lg:flex-row'>
                         Delievery Estimation:
@@ -53,14 +71,19 @@ export default function CartItem() {
                         </button>
                     </div>
                     <span className='font-bold font-inconsolata'>
-                        {quantity * 195} $
+                        {item.oneQuantityPrice * quantity} $
                     </span>
                 </div>
                 <div className='text-[22px] cursor-pointer'>
-                    <RiDeleteBin6Line />
+                    <RiDeleteBin6Line
+                        onClick={() => {
+                            dispatch(removeFromCart(item.name))
+                        }} />
                 </div>
             </div>
 
         </section>
     )
 }
+
+export default CartItem
