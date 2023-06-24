@@ -48,7 +48,8 @@ export default function Header() {
                             </svg>
                         </div>
                         {cartItems.length > 0 &&
-                            <span className='absolute text-white bg-red-500 rounded-full p-[3px] text-[10px] -top-4 left-5'>
+                            <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
+                            -top-4 left-6 flex items-center justify-center'>
                                 {cartItems.length}
                             </span>
                         }

@@ -16,7 +16,9 @@ const getAllProduct = async () => {
     name,
     sub_cat,
     price,
+    product_info,
     image,
+    "slug":slug.current,
 }`)
     return res;
 }
@@ -24,11 +26,9 @@ const getAllProduct = async () => {
 interface IProductType {
     name: string,
     sub_cat: string,
-    price: number,
-    category: {
-        name: string
-    },
     image: IImage
+    price: number,
+    slug?: string
 }
 
 export default async function ProductSection() {
@@ -51,7 +51,7 @@ export default async function ProductSection() {
                     modules={[Autoplay]}
                     spaceBetween={150}
                     slidesPerView={3}
-                    autoplay={{ delay: 10000 }}
+                    autoplay={{ delay: 4000 }}
                     breakpoints={{
                         320: {
                             slidesPerView: 1,
