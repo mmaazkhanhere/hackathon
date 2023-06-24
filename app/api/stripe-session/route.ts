@@ -9,9 +9,10 @@ const stripe = new Stripe(key, {
 
 export async function POST(request: NextRequest) {
     const body = await request.json();
-    console.log(body);
+    const { cartItems, totalPrice } = body;
+    console.log(cartItems, totalPrice)
     try {
-        if (body.length > 0) {
+        if (cartItems.length > 0) {
             const session = await stripe.checkout.sessions.create({
                 submit_type: "pay",
                 mode: "payment",
@@ -20,16 +21,21 @@ export async function POST(request: NextRequest) {
                 invoice_creation: {
                     enabled: true,
                 },
-                line_items: body.map((item: any) => {
+                line_items: cartItems.map((item: any) => {
                     return {
                         price_data: {
                             currency: "usd",
                             product_data: {
-                                name: item.name,
+                                name: item.name
                             },
-                            unit_amount: Math.round(item.price * 100),
+                            unit_amount: item.oneQuantityPrice * 100
                         },
                         quantity: item.quantity,
+                        adjustable_quantity: {
+                            enabled: true,
+                            minimum: 1,
+                            maximum: 10,
+                        },
                     };
                 }),
                 success_url: `${request.headers.get("origin")}/success`,
