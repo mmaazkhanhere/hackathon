@@ -60,6 +60,26 @@ export default function Product({ params }: { params: { slug: string } }) {
         });
     };
 
+    const handleAddToCart = async () => {
+        try {
+            const res = await fetch("/api/cart", {
+                method: "POST",
+                body: JSON.stringify({
+                    product_name: data.name
+                })
+            });
+
+            if (!res.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const result = await res.json();
+            console.log(result);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
 
     return (
         <>
@@ -104,6 +124,7 @@ export default function Product({ params }: { params: { slug: string } }) {
                                     dispatch(
                                         addToCart({ ...data, quantity, oneQuantityPrice: data.price })
                                     );
+                                    handleAddToCart();
                                     notify();
                                 }}>
                                 Add to Cart
