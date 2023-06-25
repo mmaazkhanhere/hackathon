@@ -36,7 +36,7 @@ export default async function ProductSection() {
     const data: IProductType[] = await getAllProduct();
 
     return (
-        <section className='mt-[60px] lg:mt-[150px] max-w-[450px] md:max-w-[900px] lg:max-w-[1500px] px-4'>
+        <section className='mt-[60px] lg:mt-[150px] max-w-[450px] md:max-w-[900px] lg:max-w-[1500px] px-4 mx-auto'>
             <div className='flex flex-col items-center justify-center gap-4'>
                 <span className='text-sm text-[#0000FF] text-center uppercase text-[14px] font-inconsolata 
                 font-bold tracking-[1px]'>

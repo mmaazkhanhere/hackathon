@@ -1,8 +1,24 @@
 import Link from "next/link";
 import React from "react";
+import { cookies } from "next/headers";
+import { cartTable, db } from "../lib/drizzle";
+import { eq } from "drizzle-orm"
 
-export default function success() {
-    //this page will be displayed when the payment is successful
+const deleteItems = async (user_id: string) => {
+    try {
+        const res = await db.delete(cartTable).where(eq(cartTable.user_id, user_id));
+        console.log("Items deleted successfully")
+    } catch {
+        throw new Error("cannot delete the cart items from the database")
+    }
+}
+
+
+export default async function success() {
+
+    const user_id = cookies().get("user_id")?.value as string;
+    deleteItems(user_id);
+
     return (
         <div className="min-h-[650px] flex items-center">
             <section className="max-w-[1400px] mx-auto">
