@@ -8,7 +8,7 @@ import { Image as IImage } from 'sanity'
 import { addToCart } from '@/app/store/cartSlice'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
+import { useAppDispatch } from '@/app/store/hooks'
 
 
 interface IProduct {
@@ -61,24 +61,16 @@ export default function Product({ params }: { params: { slug: string } }) {
     };
 
     const handleAddToCart = async () => {
-        try {
-            const res = await fetch("/api/cart", {
-                method: "POST",
-                body: JSON.stringify({
-                    product_name: data.name
-                })
-            });
+        const res = await fetch("/api/cart", {
+            method: "POST",
+            body: JSON.stringify({
+                product_name: data.name
+            })
+        })
 
-            if (!res.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const result = await res.json();
-            console.log(result);
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
+        const result = await res.json()
+        console.log(result)
+    }
 
 
     return (
