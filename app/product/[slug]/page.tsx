@@ -9,7 +9,7 @@ import { addToCart } from '@/app/store/cartSlice'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { useAppDispatch } from '@/app/store/hooks'
-
+import { SignedIn, SignedOut } from '@clerk/nextjs'
 
 interface IProduct {
     name: string;
@@ -111,16 +111,24 @@ export default function Product({ params }: { params: { slug: string } }) {
                         </div>
 
                         <div className='flex items-center justify-start gap-x-4'>
-                            <button className='bg-black text-white px-8 py-2'
-                                onClick={() => {
-                                    dispatch(
-                                        addToCart({ ...data, quantity, oneQuantityPrice: data.price })
-                                    );
-                                    handleAddToCart();
-                                    notify();
-                                }}>
-                                Add to Cart
-                            </button>
+                            <SignedOut>
+                                <button className='bg-black text-white px-8 py-2 cursor-not-allowed'>
+                                    Sign in for Add to Cart
+                                </button>
+                            </SignedOut>
+                            <SignedIn>
+                                <button className='bg-black text-white px-8 py-2 cursor-pointer active:scale-95
+                                hover:scale-105'
+                                    onClick={() => {
+                                        dispatch(
+                                            addToCart({ ...data, quantity, oneQuantityPrice: data.price })
+                                        );
+                                        handleAddToCart();
+                                        notify();
+                                    }}>
+                                    Add to Cart
+                                </button>
+                            </SignedIn>
 
                             <span className='text-[22px] font-bold font-inconsolata'>
                                 $ {data.price}.00
