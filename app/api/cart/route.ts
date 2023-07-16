@@ -2,11 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, cartTable } from "@/app/lib/drizzle";
 import { eq } from "drizzle-orm"
 
-import { v4 as uuid } from "uuid"
 import { cookies } from "next/headers";
 
 import { auth } from "@clerk/nextjs";
-import { redirect } from 'next/navigation'
 
 export const GET = async (request: NextRequest) => {
 
@@ -22,16 +20,11 @@ export const GET = async (request: NextRequest) => {
 
 export const POST = async (request: NextRequest) => {
 
-    console.log("POST Response: ", request)
     const req = await request.json();
 
     try {
-        const { userId } = auth()
+        const { userId } = auth();
         if (!userId) {
-            NextResponse.json({
-                status: 401,
-                error: "You are not logged in"
-            })
             return NextResponse.redirect('/sign-in')
         }
 
@@ -39,12 +32,15 @@ export const POST = async (request: NextRequest) => {
             product_name: req.product_name,
             quantity: req.quantity,
             user_id: userId
-        }).returning()
-        return NextResponse.json({ res })
+        }).returning();
+
+        console.log(res);
+        return NextResponse.json({ res });
+
     } catch (error) {
-        throw new Error('Cannot insert the product in the database')
+        throw new Error("Cannot insert the product in the database");
     }
-}
+};
 
 export const DELETE = async (request: NextRequest) => {
 

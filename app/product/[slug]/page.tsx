@@ -63,13 +63,11 @@ export default function Product({ params }: { params: { slug: string } }) {
             method: "POST",
             body: JSON.stringify({
                 product_name: data.name,
-                quantity: data.quantity
-            })
-        })
-
-        const result = await res.json()
-        console.log(result)
-    }
+                quantity: data.quantity,
+            }),
+        });
+        console.log(res)
+    };
 
 
     return (
