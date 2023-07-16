@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React from "react";
-import { cookies } from "next/headers";
 import { cartTable, db } from "../lib/drizzle";
 import { eq } from "drizzle-orm"
 import { auth } from "@clerk/nextjs";
@@ -15,7 +14,6 @@ const deleteItems = async (userId: string | null) => {
         }
     }
 }
-
 
 export default async function success() {
     const { userId } = auth();

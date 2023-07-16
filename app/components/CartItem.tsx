@@ -1,7 +1,6 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
 import React, { useState, FC } from 'react'
 import { Image as IImage } from 'sanity'
 
@@ -25,6 +24,7 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
 
 
     const [quantity, setQuantity] = useState<number>(item.quantity);
+    const oneQuantityPrice = item.price * 1;
 
     const dispatch = useAppDispatch();
 
@@ -37,6 +37,7 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
         setQuantity(quantity - 1)
         dispatch(updateCart({ ...item, quantity: quantity - 1 }));
     };
+    console.log(item)
 
     return (
         <section className='flex flex-col md:flex-row items-start md:items-center justify-center md:justify-start 
@@ -71,7 +72,7 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
                         </button>
                     </div>
                     <span className='font-bold font-inconsolata'>
-                        {item.oneQuantityPrice * quantity} $
+                        {oneQuantityPrice * quantity} $
                     </span>
                 </div>
                 <div className='text-[22px] cursor-pointer'>

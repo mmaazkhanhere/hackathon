@@ -1,36 +1,118 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import CartItem from '../components/CartItem'
-
+import { client } from '@/sanity/lib/client'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useAppSelector } from '../store/hooks'
 import getStripePromise from '../lib/stripe'
+import { Image as IImage } from 'sanity'
+import { L } from 'drizzle-orm/db.d-cf0abe10'
+
+interface IResponse {
+    id: number,
+    user_id: string,
+    product_name: string,
+    quantity: number
+}
+interface IResponseObj {
+    items: IResponse[]
+}
+interface IProduct {
+    name: string,
+    sub_cat: string,
+    image: IImage
+    price: number,
+    quantity: number,
+}
 
 
+const getProductData = async (
+    product: string
+): Promise<IProduct | null> => {
+    try {
+        const req = await client.fetch(
+            `*[_type=='product' && name=='${product}']{
+        name,
+        sub_cat,
+        image,
+        price,
+        quantity,
+        oneQuantityPrice
+      }`
+        );
+        return req[0];
+    } catch (error) {
+        console.error('Error fetching product data:', error);
+        return null;
+    }
+};
 
 export default function Cart() {
+    const [databaseData, setDatabaseData] = useState<IResponseObj | null>(
+        null
+    );
+    const [cartItems, setCartItems] = useState<IProduct[] | null>(null);
 
-    const cartList = useAppSelector((state) => state.cart.cartItems);
+    useEffect(() => {
+        const fetchCartItems = async () => {
+            try {
+                // Fetch cart items from the database
+                const response = await fetch('/api/cart');
+                const data = await response.json();
+                setDatabaseData(data);
+            } catch (error) {
+                console.error('Error fetching cart items:', error);
+            }
+        };
+        fetchCartItems();
+    }, []);
+
+    useEffect(() => {
+        const fetchProductItems = async () => {
+            if (databaseData) {
+                const itemsPromises = databaseData.items.map((item) =>
+                    getProductData(item.product_name)
+                );
+                const itemsData = await Promise.all(itemsPromises);
+                setCartItems(itemsData as IProduct[]); // Type assertion
+            }
+        };
+
+        fetchProductItems();
+    }, [databaseData]);
 
     const subTotal = useMemo(() => {
-        return cartList.reduce((total, val) => {
+        if (cartItems === null) return 0;
+        return cartItems.reduce((total, val) => {
             return total + val.price;
         }, 0);
-    }, [cartList]);
+    }, [cartItems]);
 
+    if (databaseData === null || cartItems === null) {
+        return (
+            <div className='w-full h-screen flex items-center justify-center'>
+                <Image src='/Logo.webp' alt='Logo Picture' width={200} height={200} />
+            </div>
+        );
+    }
+
+    const product: string[] = []
+    for (let i = 0; i < databaseData.items.length; i++) {
+        product.push(databaseData.items[i].product_name)
+    }
+    console.log(cartItems)
 
     const handleCheckout = async () => {
         const stripe = await getStripePromise();
-        const totalPrice = cartList.reduce((total, item) => total + item.price, 0);
-
+        const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
         const response = await fetch("/api/stripe-session/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             cache: "no-cache",
             body: JSON.stringify({
-                cartItems: cartList,
+                cartItems: cartItems,
             }),
         });
 
@@ -42,13 +124,13 @@ export default function Cart() {
 
 
     return (
-        <main className='sm:max-w-[450px] md:max-w-[950px] lg:max-w-[1400px] mt-[100px] px-6 md:px-10 mx-auto'>
-            {cartList.length > 0 && (
+        <main className=' max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] mt-[100px] px-6 md:px-10 mx-auto'>
+            {cartItems.length > 0 && (
                 <>
                     <h1 className='font-bold font-arimo text-4xl '>Shopping Cart</h1>
                     <div className='flex flex-col lg:flex-row lg:items-start '>
                         <section className='flex flex-col mt-[50px] gap-y-6 lg:w-[80%]'>
-                            {cartList.map((item) => (
+                            {cartItems.map((item) => (
                                 <CartItem item={item} key={item.name} />
                             ))}
                         </section>
@@ -57,11 +139,11 @@ export default function Cart() {
                                 <h1 className='font-bold font-arimo text-[20px]'>Order Summary</h1>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
                                     <span>Total Products</span>
-                                    <span>{cartList.length} Product</span>
+                                    <span>{cartItems.length} Product</span>
                                 </div>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
                                     <span>Total Quantities</span>
-                                    <span>{cartList.reduce((total, item) => total + item.quantity, 0)} Items</span>
+                                    <span>{cartItems.reduce((total, item) => total + item.quantity, 0)} Items</span>
                                 </div>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
                                     <span>Sub Total</span>
@@ -77,9 +159,9 @@ export default function Cart() {
                 </>
             )}
             {
-                cartList.length < 1 && (
+                cartItems.length < 1 && (
                     <section className='sm:max-w-[450px] md:max-w-[950px] lg:max-w-[1400px] mt-[100px] px-4 md:px-10 mx-auto
-             flex flex-col items-center justify-center'>
+                    flex flex-col items-center justify-center'>
                         <Image src="/emptyCart.png" alt="Empty Cart Page" width={600} height={600} />
 
                         <div className='mt-[50px] flex flex-col items-center justify-center font-inconsolata gap-y-4'>

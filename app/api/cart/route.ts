@@ -10,8 +10,8 @@ export const GET = async (request: NextRequest) => {
 
     console.log("Get Response: ", request)
     try {
-        const res = await db.select().from(cartTable)
-        return NextResponse.json({ res })
+        const items = await db.select().from(cartTable).execute();
+        return NextResponse.json({ items })
     } catch (error) {
         console.log(error)
         throw new Error("Cannot GET the reponse")
