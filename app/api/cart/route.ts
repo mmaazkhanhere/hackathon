@@ -34,7 +34,6 @@ export const POST = async (request: NextRequest) => {
             user_id: userId
         }).returning();
 
-        console.log(res);
         return NextResponse.json({ res });
 
     } catch (error) {
