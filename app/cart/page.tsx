@@ -8,7 +8,7 @@ import Image from 'next/image'
 import { useAppSelector } from '../store/hooks'
 import getStripePromise from '../lib/stripe'
 import { Image as IImage } from 'sanity'
-import { L } from 'drizzle-orm/db.d-cf0abe10'
+
 
 interface IResponse {
     id: number,
@@ -16,15 +16,18 @@ interface IResponse {
     product_name: string,
     quantity: number
 }
+
 interface IResponseObj {
     items: IResponse[]
 }
+
 interface IProduct {
     name: string,
     sub_cat: string,
     image: IImage
     price: number,
     quantity: number,
+    oneQuantityPrice: number
 }
 
 
@@ -50,9 +53,7 @@ const getProductData = async (
 };
 
 export default function Cart() {
-    const [databaseData, setDatabaseData] = useState<IResponseObj | null>(
-        null
-    );
+    const [databaseData, setDatabaseData] = useState<IResponseObj | null>(null);
     const [cartItems, setCartItems] = useState<IProduct[] | null>(null);
 
     useEffect(() => {
@@ -102,7 +103,6 @@ export default function Cart() {
     for (let i = 0; i < databaseData.items.length; i++) {
         product.push(databaseData.items[i].product_name)
     }
-    console.log(cartItems)
 
     const handleCheckout = async () => {
         const stripe = await getStripePromise();
@@ -129,7 +129,7 @@ export default function Cart() {
                 <>
                     <h1 className='font-bold font-arimo text-4xl '>Shopping Cart</h1>
                     <div className='flex flex-col lg:flex-row lg:items-start '>
-                        <section className='flex flex-col mt-[50px] gap-y-6 lg:w-[80%]'>
+                        <section className='flex flex-col mt-[50px] gap-y-6 lg:w-[80%] mr-10'>
                             {cartItems.map((item) => (
                                 <CartItem item={item} key={item.name} />
                             ))}

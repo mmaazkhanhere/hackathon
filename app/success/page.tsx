@@ -21,7 +21,6 @@ export default async function success() {
         deleteItems(userId);
     }
 
-
     return (
         <div className="min-h-[650px] flex items-center">
             <section className="max-w-[1400px] mx-auto">

@@ -10,6 +10,9 @@ import { urlForImage } from '@/sanity/lib/image'
 import { removeFromCart } from '../store/cartSlice'
 import { useAppDispatch } from '../store/hooks'
 import { updateCart } from '@/app/store/cartSlice'
+import { cartTable, db } from '../lib/drizzle'
+import { eq } from 'drizzle-orm'
+import { auth } from '@clerk/nextjs'
 
 interface Product {
     name: string,
@@ -20,7 +23,22 @@ interface Product {
     oneQuantityPrice: number
 }
 
+const deleteItems = async (product_name: string) => {
+
+    try {
+        const res = await db.delete(cartTable).where(eq(cartTable.product_name, product_name));
+        console.log("Items deleted successfully")
+    } catch {
+        throw new Error("cannot delete the cart items from the database")
+    }
+
+}
+
 const CartItem: FC<{ item: Product }> = ({ item }) => {
+
+    const handleRemoveItem = () => {
+        deleteItems(item.name);
+    }
 
 
     const [quantity, setQuantity] = useState<number>(item.quantity);
@@ -78,7 +96,7 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
                 <div className='text-[22px] cursor-pointer'>
                     <RiDeleteBin6Line
                         onClick={() => {
-                            dispatch(removeFromCart(item.name))
+                            handleRemoveItem();
                         }} />
                 </div>
             </div>
