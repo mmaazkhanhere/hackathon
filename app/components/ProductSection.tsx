@@ -36,7 +36,7 @@ export default async function ProductSection() {
     const data: IProductType[] = await getAllProduct();
 
     return (
-        <section className='mt-[60px] lg:mt-[150px] max-w-[450px] md:max-w-[900px] lg:max-w-[1500px] px-4 mx-auto'>
+        <section className='mt-[60px] lg:mt-[150px] max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] px-4 mx-auto'>
             <div className='flex flex-col items-center justify-center gap-4'>
                 <span className='text-sm text-[#0000FF] text-center uppercase text-[14px] font-inconsolata 
                 font-bold tracking-[1px]'>
@@ -46,7 +46,7 @@ export default async function ProductSection() {
                     Check What We Have
                 </h1>
             </div>
-            <div className='flex items-center justify-center mx-auto pl-[10px] md:pl-[50px] lg:pl-0 mt-[50px]'>
+            <div className='flex items-center justify-center mx-auto mt-[50px]'>
                 <Swiper
                     modules={[Autoplay]}
                     spaceBetween={150}
@@ -60,7 +60,7 @@ export default async function ProductSection() {
                         // when window width is >= 480px
                         480: {
                             slidesPerView: 2,
-                            spaceBetween: 40
+                            spaceBetween: 20
                         },
                         950: {
                             slidesPerView: 3,

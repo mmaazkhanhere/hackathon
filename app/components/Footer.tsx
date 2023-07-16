@@ -6,7 +6,7 @@ import { FaFacebookF, FaTwitter, FaLinkedinIn } from "react-icons/fa"
 export default function Footer() {
     return (
         <>
-            <section className='max-w-[450px] md:max-w-[900px] lg:max-w-[1500px] mx-auto mt-[60px] lg:mt-[150px] 
+            <section className=' max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] mx-auto mt-[60px] lg:mt-[150px] 
         grid grid-cols-1 lg:grid-cols-4 px-4 lg:px-0 gap-y-5 lg:gap-y-0'>
                 <div className='flex flex-col items-start justify-center gap-y-6 max-w-[250px]'>
                     <div>
@@ -61,8 +61,8 @@ export default function Footer() {
                 </div>
             </section>
             <section className='mt-[60px] lg:mt-[150px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 font-inconsolata 
-      text-center border-t-4 items-center justify-center border-black lg:gap-x-[450px] py-4 px-4 lg:px-0 
-      gap-y-4 lg:gap-y-0'>
+            text-center border-t-4 items-center justify-center border-black lg:gap-x-[450px] lg:px-0 
+            gap-y-4 lg:gap-y- '>
                 <div>
                     Copyright <span className='text-[22px]'>&#169; </span>2022 Dine Market
                 </div>

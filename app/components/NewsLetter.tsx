@@ -2,9 +2,9 @@ import React from 'react'
 
 export default function NewsLetter() {
     return (
-        <section className='relative mt-[60px] lg:mt-[150px] max-w-[450px] md:max-w-[900px] lg:max-w-[1500px] mx-auto
+        <section className='relative mt-[60px] lg:mt-[150px]  max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] mx-auto
       px-4 '>
-            <div className='absolute font-black font-inconsolata opacity-10 text-[65px] md:text-[85px] lg:text-[92px] 
+            <div className='absolute font-black font-inconsolata opacity-10 text-[55px] md:text-[85px] lg:text-[92px] 
         md:left-[18%] lg:left-[32%]'>
                 Newsletter
             </div>

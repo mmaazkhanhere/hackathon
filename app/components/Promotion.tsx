@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function Promotion() {
     return (
-        <section className='flex flex-col max-w-[450px] md:max-w-[900px] lg:max-w-[1500px] items-center justify-center mt-[150px] px-4 md:px-10 mx-auto'>
+        <section className='flex flex-col max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] items-center justify-center mt-[150px] px-4 md:px-10 mx-auto'>
             <div className='flex flex-col items-center justify-center gap-4'>
                 <span className='text-sm text-[#0000FF] text-center uppercase text-[14px] font-inconsolata 
                 font-bold tracking-[1px]'>

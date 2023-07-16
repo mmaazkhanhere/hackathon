@@ -7,7 +7,7 @@ import NewsLetter from './components/NewsLetter'
 
 export default function Home() {
   return (
-    <main>
+    <main className='mx-auto'>
       <HeroBanner />
       <Promotion />
       <ProductSection />

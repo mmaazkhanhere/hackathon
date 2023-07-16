@@ -3,7 +3,8 @@ import React from 'react'
 
 export default function Features() {
     return (
-        <section className='mt-[80px] lg:mt-[150px] max-w-[450px] md:max-w-[900px] lg:max-w-[1500px] mx-auto p-6 lg:p-0'>
+        <section className='mt-[80px] lg:mt-[150px]  max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] mx-auto p-6 
+        lg:p-0'>
             <div>
                 <h1 className='font-bold font-arimo tracking-[1px] text-3xl text-left lg:text-center'>
                     Unique and Authentic Vintage Design Jewellery
@@ -12,7 +13,7 @@ export default function Features() {
             <div className='flex flex-col lg:flex-row mt-[50px] bg-[#fbfcff]'>
                 <div className='relative lg:w-1/2 p-4 lg:p-14'>
                     <div className='absolute font-black font-inconsolata opacity-10 max-w-[300px] '>
-                        <p className='text-[65px] lg:text-[80px] lg:leading-[100px]'>Different from others</p>
+                        <p className='text-[45px] md:text-[65px] lg:text-[80px] lg:leading-[100px]'>Different from others</p>
                     </div>
                     <div className='grid grid-cols-2 grid-rows-2 gap-x-4 lg:gap-x-10 gap-y-6 lg:gap-y-14'>
                         <div className='flex flex-col items-start justify-center gap-y-2 max-w-[200px] 
