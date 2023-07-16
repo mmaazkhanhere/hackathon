@@ -2,16 +2,18 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAppSelector } from '../store/hooks'
+import { SignInButton, UserButton } from '@clerk/nextjs'
+import { SignedIn, SignedOut } from '@clerk/nextjs'
 
 
 export default function Header() {
 
     const cartItems = useAppSelector((state) => state.cart.cartItems)
 
-
     const [menu, setMenu] = useState(false);
+
 
     const handleMenuShow = () => {
         setMenu(true);
@@ -20,8 +22,8 @@ export default function Header() {
     const handleMenuHide = () => {
         setMenu(false)
     }
-
     return (
+
         <section className=' max-w-[450px] md:max-w-[900px] lg:max-w-[1500px] mx-auto mt-6 md:mt-12 lg:mt-8'>
             <nav className={`hidden items-center sticky justify-between lg:flex transition-transform duration-300`}>
                 <div>
@@ -41,20 +43,32 @@ export default function Header() {
                     </span>
                     <input type="text" placeholder='What you are looking for' className='w-[450px] rounded-md text-sm' />
                 </div>
-                <Link href="/cart">
-                    <div className='relative hidden lg:flex'>
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 8 8"><path fill="currentColor" d="M.34 1A.506.506 0 0 0 .5 2H2l.09.25l.41 1.25l.41 1.25c.04.13.21.25.34.25h3.5c.14 0 .3-.12.34-.25l.81-2.5c.04-.13-.02-.25-.16-.25H3.3l-.38-.72A.5.5 0 0 0 2.48 1h-2a.5.5 0 0 0-.09 0a.5.5 0 0 0-.06 0zM3.5 6c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5zm3 0c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5z" />
-                            </svg>
-                        </div>
-                        {cartItems.length > 0 &&
-                            <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
+                {/*Icons */}
+                <div className='flex items-center justify-center gap-10'>
+                    <Link href="/cart">
+                        <div className='relative hidden lg:flex'>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 8 8"><path fill="currentColor" d="M.34 1A.506.506 0 0 0 .5 2H2l.09.25l.41 1.25l.41 1.25c.04.13.21.25.34.25h3.5c.14 0 .3-.12.34-.25l.81-2.5c.04-.13-.02-.25-.16-.25H3.3l-.38-.72A.5.5 0 0 0 2.48 1h-2a.5.5 0 0 0-.09 0a.5.5 0 0 0-.06 0zM3.5 6c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5zm3 0c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5z" />
+                                </svg>
+                            </div>
+                            {cartItems.length > 0 &&
+                                <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
                             -top-4 left-6 flex items-center justify-center'>
-                                {cartItems.length}
-                            </span>
-                        }
+                                    {cartItems.length}
+                                </span>
+                            }
+                        </div>
+                    </Link>
+
+                    <div className={`${SignedIn}?'px-6 py-2 bg-black text-white hover:bg-gray-500 active:scale-95 rounded-lg':'' `}>
+                        <SignedOut>
+                            <SignInButton />
+                        </SignedOut>
+                        <SignedIn>
+                            <UserButton />
+                        </SignedIn>
                     </div>
-                </Link>
+                </div>
             </nav>
             {menu === false &&
                 <nav className='flex items-center justify-between lg:hidden px-4 md:px-10 '>

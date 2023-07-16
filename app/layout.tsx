@@ -2,6 +2,7 @@ import './globals.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ReduxProvider from './store/ReduxProvider'
+import { ClerkProvider } from "@clerk/nextjs"
 
 export const metadata = {
   title: 'Dine Ecommerce',
@@ -14,14 +15,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
-        <ReduxProvider>
-          <Header />
-          {children}
-          <Footer />
-        </ReduxProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body>
+          <ReduxProvider>
+            <Header />
+            {children}
+            <Footer />
+          </ReduxProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
