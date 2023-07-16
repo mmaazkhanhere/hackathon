@@ -6,7 +6,8 @@ interface IProduct {
   sub_cat: string,
   price: number,
   image: IImage,
-  product_info: string
+  product_info: string,
+  quantity: number,
 }
 
 
@@ -17,7 +18,8 @@ export const getProduct = async (slug: string): Promise<IProduct> => {
     price,
     image,
     sub_cat,
-    product_info
+    product_info,
+    quantity
 }`;
 
     // Fetch data using the query

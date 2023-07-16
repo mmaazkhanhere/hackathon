@@ -4,9 +4,12 @@ import { eq } from "drizzle-orm"
 
 import { v4 as uuid } from "uuid"
 import { cookies } from "next/headers";
-import { PgVarchar } from "drizzle-orm/pg-core";
+
+import { auth } from "@clerk/nextjs";
+import { redirect } from 'next/navigation'
 
 export const GET = async (request: NextRequest) => {
+
     console.log("Get Response: ", request)
     try {
         const res = await db.select().from(cartTable)
@@ -21,23 +24,25 @@ export const POST = async (request: NextRequest) => {
 
     console.log("POST Response: ", request)
     const req = await request.json();
-    const uid = uuid();
-    const setCookies = cookies();
-
-    const user_id = cookies().get("user_id")
-    if (!user_id) {
-        setCookies.set("user_id", uid)
-    }
 
     try {
+        const { userId } = auth()
+        if (!userId) {
+            NextResponse.json({
+                status: 401,
+                error: "You are not logged in"
+            })
+            return NextResponse.redirect('/sign-in')
+        }
+
         const res = await db.insert(cartTable).values({
             product_name: req.product_name,
-            quantity: 1,
-            user_id: cookies().get("user_id")?.value as string
+            quantity: req.quantity,
+            user_id: userId
         }).returning()
         return NextResponse.json({ res })
     } catch (error) {
-
+        throw new Error('Cannot insert the product in the database')
     }
 }
 

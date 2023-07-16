@@ -17,17 +17,14 @@ interface IProduct {
     price: number;
     image: IImage;
     product_info: string;
+    quantity: number;
 }
 
 
 export default function Product({ params }: { params: { slug: string } }) {
 
     const [data, setData] = useState<IProduct | null>(null);
-
-    const quantity = 1
-
     const dispatch = useAppDispatch();
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,6 +41,7 @@ export default function Product({ params }: { params: { slug: string } }) {
 
 
     if (data === null) {
+
         return <div className='w-full h-screen flex items-center justify-center'>
             <Image src="/Logo.webp" alt='Logo Picture' width={200} height={200} />
         </div>;
@@ -64,7 +62,8 @@ export default function Product({ params }: { params: { slug: string } }) {
         const res = await fetch("/api/cart", {
             method: "POST",
             body: JSON.stringify({
-                product_name: data.name
+                product_name: data.name,
+                quantity: data.quantity
             })
         })
 
@@ -121,7 +120,7 @@ export default function Product({ params }: { params: { slug: string } }) {
                                 hover:scale-105'
                                     onClick={() => {
                                         dispatch(
-                                            addToCart({ ...data, quantity, oneQuantityPrice: data.price })
+                                            addToCart({ ...data, oneQuantityPrice: data.price })
                                         );
                                         handleAddToCart();
                                         notify();

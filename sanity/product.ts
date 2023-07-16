@@ -45,5 +45,10 @@ export const product = defineType({
             type: 'reference',
             to: [{ type: 'category' }],
         }),
+        defineField({
+            name: 'quantity',
+            title: 'Quantity',
+            type: 'number'
+        })
     ]
 })
