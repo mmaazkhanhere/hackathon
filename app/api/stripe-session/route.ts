@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { urlForImage } from '@/sanity/lib/image'
 
 const key = process.env.STRIPE_SECRET_KEY || "";
 
@@ -10,7 +11,6 @@ const stripe = new Stripe(key, {
 export async function POST(request: NextRequest) {
     const body = await request.json();
     const { cartItems, totalPrice } = body;
-    console.log(cartItems, totalPrice)
     try {
         if (cartItems.length > 0) {
             const session = await stripe.checkout.sessions.create({
@@ -26,16 +26,12 @@ export async function POST(request: NextRequest) {
                         price_data: {
                             currency: "usd",
                             product_data: {
-                                name: item.name
+                                name: item.name,
+                                images: [urlForImage(item.image).url()]
                             },
                             unit_amount: item.oneQuantityPrice * 100
                         },
                         quantity: item.quantity,
-                        adjustable_quantity: {
-                            enabled: true,
-                            minimum: 1,
-                            maximum: 10,
-                        },
                     };
                 }),
                 success_url: `${request.headers.get("origin")}/success`,
