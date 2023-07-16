@@ -60,9 +60,11 @@ export default function Header() {
                         </div>
                     </Link>
 
-                    <div className={`${SignedIn}?'px-6 py-2 bg-black text-white hover:bg-gray-500 active:scale-95 rounded-lg':'' `}>
+                    <div >
                         <SignedOut>
-                            <SignInButton />
+                            <div className='px-6 py-2 bg-black text-white hover:bg-gray-500 active:scale-95 rounded-lg'>
+                                <SignInButton />
+                            </div>
                         </SignedOut>
                         <SignedIn>
                             <UserButton />
