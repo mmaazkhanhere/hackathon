@@ -66,7 +66,6 @@ export default function Product({ params }: { params: { slug: string } }) {
                 quantity: data.quantity,
             }),
         });
-        console.log(res);
     };
 
 

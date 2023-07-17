@@ -60,7 +60,7 @@ export default function Cart() {
         const fetchCartItems = async () => {
             try {
                 // Fetch cart items from the database
-                const response = await fetch('/api/cart');
+                const response = await fetch('/api/cart/get');
                 const data = await response.json();
                 setDatabaseData(data);
             } catch (error) {

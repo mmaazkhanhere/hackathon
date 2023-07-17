@@ -3,9 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { SignInButton, UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs'
-
-
+import { SignInButton, UserButton, SignedIn, SignedOut } from '@clerk/nextjs'
 
 interface IResponse {
     id: number,
@@ -26,7 +24,7 @@ export default function Header() {
     const fetchCartItems = async () => {
         try {
             // Fetch cart items from the database
-            const response = await fetch('/api/cart');
+            const response = await fetch('/api/cart/get');
             const data = await response.json();
             setDatabaseData(data);
         } catch (error) {
@@ -34,11 +32,9 @@ export default function Header() {
         }
     };
 
-    // const user = useUser();
-
     useEffect(() => {
         fetchCartItems();
-        const interval = setInterval(fetchCartItems, 5000);
+        const interval = setInterval(fetchCartItems, 4000);
 
         return () => {
             clearInterval(interval);

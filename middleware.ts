@@ -1,7 +1,9 @@
 import { authMiddleware } from "@clerk/nextjs";
 
-export default authMiddleware();
+export default authMiddleware({
+    publicRoutes: ['/api/cart/get', '/api/cart/delete'],
+});
 
 export const config = {
-    matcher: ["/cart", "/api/cart/POST", '/success', "/api/stripe-session"],
-};
+    matcher: ['/cart', '/success', '/api/cart', '/api/stripe-session']
+}

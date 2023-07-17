@@ -3,13 +3,12 @@
 import Image from 'next/image'
 import React, { useState, FC } from 'react'
 import { Image as IImage } from 'sanity'
-
 import { RiDeleteBin6Line } from 'react-icons/ri'
 import { urlForImage } from '@/sanity/lib/image'
-
-
 import { useAppDispatch } from '../store/hooks'
 import { updateCart } from '@/app/store/cartSlice'
+import { cartTable, db } from '../lib/drizzle'
+import { eq } from 'drizzle-orm'
 
 interface Product {
     name: string,
@@ -38,15 +37,21 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
         dispatch(updateCart({ ...item, quantity: quantity - 1 }));
     };
 
-    const handleRemoveItem = async () => {
-        const res = await fetch('/api/cart', {
-            method: 'DELETE',
-            body: JSON.stringify({
-                product_name: item.name
-            })
-        });
-        console.log(res);
+    const handleDelete = async () => {
+        try {
+            const productName = item.name; // Replace with the actual product name
+            const req = await fetch(`/api/cart?product_name=${encodeURIComponent(productName)}`, {
+                method: 'DELETE',
+                cache: 'no-cache'
+            });
+            if (!req.ok) {
+                throw new Error('Unexpected Error');
+            }
+        } catch (error) {
+            console.error('Error deleting item:', error);
+        }
     };
+
 
     return (
         <section className='flex flex-col md:flex-row items-start md:items-center justify-center md:justify-start 
@@ -85,8 +90,7 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
                     </span>
                 </div>
                 <div className='text-[22px] cursor-pointer'>
-                    <RiDeleteBin6Line
-                        onClick={handleRemoveItem}
+                    <RiDeleteBin6Line onClick={handleDelete}
                     />
                 </div>
             </div>
