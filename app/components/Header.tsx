@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { SignInButton, UserButton, SignedIn, SignedOut } from '@clerk/nextjs'
-import io from 'socket.io-client';
+import { SignInButton, UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs'
+
 
 
 interface IResponse {
@@ -34,12 +34,16 @@ export default function Header() {
         }
     };
 
+    // const user = useUser();
+
     useEffect(() => {
         fetchCartItems();
         const interval = setInterval(fetchCartItems, 5000);
+
         return () => {
             clearInterval(interval);
-        }
+        };
+
     }, []);
 
     if (databaseData === null) {
@@ -103,7 +107,7 @@ export default function Header() {
                             </button>
                         </SignedOut>
                         <SignedIn>
-                            <UserButton />
+                            <UserButton afterSignOutUrl='/' />
                         </SignedIn>
                     </div>
                 </div>

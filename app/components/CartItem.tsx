@@ -44,9 +44,9 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
             body: JSON.stringify({
                 product_name: item.name
             })
-        })
+        });
         console.log(res);
-    }
+    };
 
     return (
         <section className='flex flex-col md:flex-row items-start md:items-center justify-center md:justify-start 
@@ -86,9 +86,8 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
                 </div>
                 <div className='text-[22px] cursor-pointer'>
                     <RiDeleteBin6Line
-                        onClick={() => {
-                            handleRemoveItem();
-                        }} />
+                        onClick={handleRemoveItem}
+                    />
                 </div>
             </div>
 

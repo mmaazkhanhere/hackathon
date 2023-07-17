@@ -2,13 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, cartTable } from "@/app/lib/drizzle";
 import { eq } from "drizzle-orm"
 
-import { cookies } from "next/headers";
 
 import { auth } from "@clerk/nextjs";
 
 export const GET = async (request: NextRequest) => {
 
-    console.log("Get Response: ", request)
     try {
         const items = await db.select().from(cartTable).execute();
         return NextResponse.json({ items })
@@ -20,7 +18,14 @@ export const GET = async (request: NextRequest) => {
 
 export const POST = async (request: NextRequest) => {
 
+    console.log(request)
+    console.log(request.json())
+    console.log(request.body)
+
     const req = await request.json();
+
+    console.log(req)
+    console.log(req.body)
 
     try {
         const { userId } = auth();
@@ -43,21 +48,22 @@ export const POST = async (request: NextRequest) => {
 };
 
 export const DELETE = async (request: NextRequest) => {
+    console.log("Get DELETE: ", request.body);
 
-    console.log("Get DELETE: ", request)
-    const user_id = cookies().get("user_id")?.value as string;
-
-    if (!user_id) {
-        throw new Error("user cannot be found");
-    }
+    const req = await request.json();
 
     try {
-        const res = await db.delete(cartTable).where(eq(cartTable.user_id, user_id));
-        return NextResponse.json(res);
+        const res = await db
+            .delete(cartTable)
+            .where(eq(cartTable.product_name, req.product_name));
+
+        // Return the deleted item or appropriate status code
+        return NextResponse.json({ res });
     } catch (error) {
+        console.error("Error deleting the product:", error);
         throw new Error("Cannot delete the product");
     }
-}
+};
     // const url = req.nextUrl;
     // let user_id;
     // if (!url.searchParams.has("user_id")) {
