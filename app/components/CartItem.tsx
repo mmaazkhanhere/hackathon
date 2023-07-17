@@ -40,7 +40,7 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
     const handleDelete = async () => {
         try {
             const productName = item.name; // Replace with the actual product name
-            const req = await fetch(`/api/cart?product_name=${encodeURIComponent(productName)}`, {
+            const req = await fetch(`/api/cart`, {
                 method: 'DELETE',
                 cache: 'no-cache'
             });
@@ -51,7 +51,6 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
             console.error('Error deleting item:', error);
         }
     };
-
 
     return (
         <section className='flex flex-col md:flex-row items-start md:items-center justify-center md:justify-start 
