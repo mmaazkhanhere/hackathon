@@ -56,18 +56,25 @@ export default function Cart() {
     const [databaseData, setDatabaseData] = useState<IResponseObj | null>(null);
     const [cartItems, setCartItems] = useState<IProduct[] | null>(null);
 
+    const fetchCartItems = async () => {
+        try {
+            // Fetch cart items from the database
+            const response = await fetch('/api/cart/get');
+            const data = await response.json();
+            setDatabaseData(data);
+        } catch (error) {
+            console.error('Error fetching cart items:', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchCartItems = async () => {
-            try {
-                // Fetch cart items from the database
-                const response = await fetch('/api/cart/get');
-                const data = await response.json();
-                setDatabaseData(data);
-            } catch (error) {
-                console.error('Error fetching cart items:', error);
-            }
-        };
         fetchCartItems();
+        const interval = setInterval(fetchCartItems, 4000);
+
+        return () => {
+            clearInterval(interval);
+        };
+
     }, []);
 
     useEffect(() => {
