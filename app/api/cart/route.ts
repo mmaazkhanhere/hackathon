@@ -37,6 +37,7 @@ export const POST = async (request: NextRequest) => {
         return NextResponse.json({ res });
 
     } catch (error) {
+        console.error(error)
         throw new Error("Cannot insert the product in the database");
     }
 };

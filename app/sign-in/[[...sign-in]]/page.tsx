@@ -5,7 +5,7 @@ export default function Page() {
         <section className="w-full h-screen flex items-center justify-center">
             <div className="container">
                 <div className="flex justify-center">
-                    <SignIn />
+                    <SignIn redirectUrl='/' />
                 </div>
             </div>
         </section>

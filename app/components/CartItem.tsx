@@ -7,12 +7,9 @@ import { Image as IImage } from 'sanity'
 import { RiDeleteBin6Line } from 'react-icons/ri'
 import { urlForImage } from '@/sanity/lib/image'
 
-import { removeFromCart } from '../store/cartSlice'
+
 import { useAppDispatch } from '../store/hooks'
 import { updateCart } from '@/app/store/cartSlice'
-import { cartTable, db } from '../lib/drizzle'
-import { eq } from 'drizzle-orm'
-import { auth } from '@clerk/nextjs'
 
 interface Product {
     name: string,
@@ -23,23 +20,8 @@ interface Product {
     oneQuantityPrice: number
 }
 
-const deleteItems = async (product_name: string) => {
-
-    try {
-        const res = await db.delete(cartTable).where(eq(cartTable.product_name, product_name));
-        console.log("Items deleted successfully")
-    } catch {
-        throw new Error("cannot delete the cart items from the database")
-    }
-
-}
 
 const CartItem: FC<{ item: Product }> = ({ item }) => {
-
-    const handleRemoveItem = () => {
-        deleteItems(item.name);
-    }
-
 
     const [quantity, setQuantity] = useState<number>(item.quantity);
     const oneQuantityPrice = item.price * 1;
@@ -55,7 +37,16 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
         setQuantity(quantity - 1)
         dispatch(updateCart({ ...item, quantity: quantity - 1 }));
     };
-    console.log(item)
+
+    const handleRemoveItem = async () => {
+        const res = await fetch('/api/cart', {
+            method: 'DELETE',
+            body: JSON.stringify({
+                product_name: item.name
+            })
+        })
+        console.log(res);
+    }
 
     return (
         <section className='flex flex-col md:flex-row items-start md:items-center justify-center md:justify-start 

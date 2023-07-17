@@ -3,9 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { useAppSelector } from '../store/hooks'
-import { SignInButton, UserButton } from '@clerk/nextjs'
-import { SignedIn, SignedOut } from '@clerk/nextjs'
+import { SignInButton, UserButton, SignedIn, SignedOut } from '@clerk/nextjs'
+import io from 'socket.io-client';
 
 
 interface IResponse {
@@ -24,19 +23,24 @@ export default function Header() {
     const [menu, setMenu] = useState(false);
     const [databaseData, setDatabaseData] = useState<IResponseObj | null>(null);
 
+    const fetchCartItems = async () => {
+        try {
+            // Fetch cart items from the database
+            const response = await fetch('/api/cart');
+            const data = await response.json();
+            setDatabaseData(data);
+        } catch (error) {
+            console.error('Error fetching cart items:', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchCartItems = async () => {
-            try {
-                // Fetch cart items from the database
-                const response = await fetch('/api/cart');
-                const data = await response.json();
-                setDatabaseData(data);
-            } catch (error) {
-                console.error('Error fetching cart items:', error);
-            }
-        };
         fetchCartItems();
-    }, [databaseData]);
+        const interval = setInterval(fetchCartItems, 5000);
+        return () => {
+            clearInterval(interval);
+        }
+    }, []);
 
     if (databaseData === null) {
         return (
@@ -81,12 +85,14 @@ export default function Header() {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 8 8"><path fill="currentColor" d="M.34 1A.506.506 0 0 0 .5 2H2l.09.25l.41 1.25l.41 1.25c.04.13.21.25.34.25h3.5c.14 0 .3-.12.34-.25l.81-2.5c.04-.13-.02-.25-.16-.25H3.3l-.38-.72A.5.5 0 0 0 2.48 1h-2a.5.5 0 0 0-.09 0a.5.5 0 0 0-.06 0zM3.5 6c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5zm3 0c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5z" />
                                 </svg>
                             </div>
-                            {databaseData.items.length > 0 &&
-                                <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
+                            <SignedIn>
+                                {databaseData.items.length > 0 &&
+                                    <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
                                 -top-4 left-6 flex items-center justify-center'>
-                                    {databaseData.items.length}
-                                </span>
-                            }
+                                        {databaseData.items.length}
+                                    </span>
+                                }
+                            </SignedIn>
                         </div>
                     </Link>
 
@@ -142,10 +148,12 @@ export default function Header() {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 8 8"><path fill="currentColor" d="M.34 1A.506.506 0 0 0 .5 2H2l.09.25l.41 1.25l.41 1.25c.04.13.21.25.34.25h3.5c.14 0 .3-.12.34-.25l.81-2.5c.04-.13-.02-.25-.16-.25H3.3l-.38-.72A.5.5 0 0 0 2.48 1h-2a.5.5 0 0 0-.09 0a.5.5 0 0 0-.06 0zM3.5 6c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5zm3 0c-.28 0-.5.22-.5.5s.22.5.5.5s.5-.22.5-.5s-.22-.5-.5-.5z" />
                                     </svg>
                                 </div>
-                                <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
+                                <SignedIn>
+                                    <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
                                 -top-4 left-6 flex items-center justify-center'>
-                                    {databaseData.items.length}
-                                </span>
+                                        {databaseData.items.length}
+                                    </span>
+                                </SignedIn>
                             </div>
                         </Link>
                         <Link href='/female' className='border-b border-b-slate-300 w-full flex justify-center pb-2' >
