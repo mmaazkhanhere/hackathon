@@ -74,21 +74,21 @@ export default function Product({ params }: { params: { slug: string } }) {
     return (
         <>
             <ToastContainer />
-            <main className='sm:max-w-[450px] md:max-w-[950px] lg:max-w-[1400px] mt-[100px] px-4 md:px-10 mx-auto
+            <main className='sm:max-w-[450px] md:max-w-[950px] lg:max-w-[1400px] mt-[100px] md:px-10 mx-auto
         bg-[#fdfdfc]'>
-                <section className='grid md:grid-cols-1 lg:grid-cols-2 gap-y-10 lg:gap-x-[400px]'>
-                    <div className=' md:w-[700px] lg:w-[800px] flex items-start justify-center'>
-                        <div className='mr-[10px] md:mr-[20px] lg:mr-[30px]' >
+                <section className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-y-10 gap-x-0 lg:gap-x-[400px]'>
+                    <div className=' w-[350px] md:w-[600px] lg:w-[800px] flex items-start justify-start mx-auto '>
+                        <div className='mr-[10px] md:mr-[20px] lg:mr-[30px] ' >
                             <Image src={urlForImage(data.image).url()} alt={data.name} width={100} height={100}
-                                className='object-cover' />
+                                className='object-cover w-[50px] md:w-[70px] lg:w-[90px]' />
                         </div>
-                        <div className='w-full'>
+                        <div>
                             <Image src={urlForImage(data.image).url()} alt={data.name} width={900} height={900}
-                                className="object-cover w-full" />
+                                className="object-cover w-[250px] md:w-[550px] lg:w-[800px]" />
 
                         </div>
                     </div>
-                    <div className='p-10  pl-4 flex flex-col gap-y-4'>
+                    <div className='p-10 pl-4 flex flex-col gap-y-4'>
                         <div className='flex flex-col items-start justify-center leading-[26px]'>
                             <h1 className=' font-arimo text-[28px] font-medium tracking-[2px]'>
                                 {data.name}
@@ -135,8 +135,8 @@ export default function Product({ params }: { params: { slug: string } }) {
                 <section className='flex flex-col items-start justify-center gap-y-10  mt-[80px] bg-white px-4
             mb-[50px]'>
                     <div className='relative mt-[20px]'>
-                        <div className='absolute font-inconsolata -top-14'>
-                            <h1 className='text-[72px] md:text-[82px] lg:text-[92px]  tracking-tighter text-gray-200'>
+                        <div className='absolute font-inconsolata -top-[60px]'>
+                            <h1 className='text-[52px] md:text-[82px] lg:text-[92px]  tracking-tighter text-gray-200'>
                                 Overview
                             </h1>
                         </div>

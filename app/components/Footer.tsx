@@ -7,7 +7,7 @@ export default function Footer() {
     return (
         <>
             <section className=' max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] mx-auto mt-[60px] lg:mt-[150px] 
-        grid grid-cols-1 lg:grid-cols-4 px-4 lg:px-0 gap-y-5 lg:gap-y-0'>
+        grid grid-cols-1 lg:grid-cols-4 px-2 lg:px-0 gap-y-5 lg:gap-y-0'>
                 <div className='flex flex-col items-start justify-center gap-y-6 max-w-[250px]'>
                     <div>
                         <Image src="/Logo.webp" alt="Logo Picture" width={150} height={150} />

@@ -141,7 +141,7 @@ export default function Header() {
                         </div>
                     </nav>
                     <div className='absolute flex flex-col items-center justify-center gap-y-4 bg-black text-white
-                    rounded-xl p-10 mt-20 font-arimo   w-[75vw] md:top-0 z-10 md:left-10 '>
+                        rounded-xl p-10 mt-20 font-arimo w-[75vw] md:top-0 z-10 left-10 md:left-10  '>
                         <Link href="/cart" className='border-b border-b-slate-300 w-full flex justify-center pb-2'>
                             <div className='relative flex '>
                                 <div>
