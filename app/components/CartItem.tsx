@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import React, { useState, FC } from 'react'
+import React, { useState, FC, useEffect } from 'react'
 import { Image as IImage } from 'sanity'
 import { RiDeleteBin6Line } from 'react-icons/ri'
 import { urlForImage } from '@/sanity/lib/image'
@@ -10,7 +10,7 @@ import { updateCart } from '@/app/store/cartSlice'
 import { cartTable, db } from '../lib/drizzle'
 import { eq } from 'drizzle-orm'
 
-interface Product {
+interface IProduct {
     name: string,
     sub_cat: string,
     image: IImage
@@ -19,13 +19,35 @@ interface Product {
     oneQuantityPrice: number
 }
 
+interface IDatabase {
+    id: number,
+    user_id: string,
+    product_name: string,
+    quantity: number
+}
 
-const CartItem: FC<{ item: Product }> = ({ item }) => {
+interface IDatabaseObj {
+    items: IDatabase[]
+}
 
-    const [quantity, setQuantity] = useState<number>(item.quantity);
+interface ICartItems {
+    item: IProduct,
+    databaseData: IDatabaseObj,
+}
+
+
+const CartItem: React.FC<ICartItems> = ({ item, databaseData }) => {
+
+
+    const product = databaseData.items.find((product) => product.product_name === item.name);
     const oneQuantityPrice = item.price * 1;
 
+    const quantiyFromDatabase = product?.quantity || 1;
+
+    const [quantity, setQuantity] = useState<number>(quantiyFromDatabase);
+
     const dispatch = useAppDispatch();
+
 
     const addQuantity = () => {
         setQuantity(quantity + 1);

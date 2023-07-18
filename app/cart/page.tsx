@@ -43,7 +43,7 @@ const getProductData = async (
         price,
         quantity,
         oneQuantityPrice
-      }`
+    }`
         );
         return req[0];
     } catch (error) {
@@ -106,11 +106,6 @@ export default function Cart() {
         );
     }
 
-    const product: string[] = []
-    for (let i = 0; i < databaseData.items.length; i++) {
-        product.push(databaseData.items[i].product_name)
-    }
-
     const handleCheckout = async () => {
         const stripe = await getStripePromise();
         const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
@@ -129,7 +124,6 @@ export default function Cart() {
         }
     }
 
-
     return (
         <main className=' max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] mt-[100px] px-6 md:px-10 mx-auto'>
             {cartItems.length > 0 && (
@@ -138,7 +132,7 @@ export default function Cart() {
                     <div className='flex flex-col lg:flex-row lg:items-start '>
                         <section className='flex flex-col mt-[50px] gap-y-6 lg:w-[80%] mr-10'>
                             {cartItems.map((item) => (
-                                <CartItem item={item} key={item.name} />
+                                <CartItem item={item} key={item.name} databaseData={databaseData} />
                             ))}
                         </section>
                         <section className=' bg-[#fdfdfd] mt-[50px] lg:w-[30%]'>
@@ -150,7 +144,10 @@ export default function Cart() {
                                 </div>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
                                     <span>Total Quantities</span>
-                                    <span>{cartItems.reduce((total, item) => total + item.quantity, 0)} Items</span>
+                                    {
+                                        databaseData.items.length > 0 &&
+                                        <span>{cartItems.reduce((total, item) => total + databaseData.items[0].quantity, 0)} Items</span>
+                                    }
                                 </div>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
                                     <span>Sub Total</span>
