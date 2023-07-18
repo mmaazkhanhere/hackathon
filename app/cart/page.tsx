@@ -67,6 +67,19 @@ export default function Cart() {
         }
     };
 
+    const [totalQuantity, setTotalQuantity] = useState<number>(1);
+
+    useEffect(() => {
+        // Calculate the total quantity whenever the databaseData changes
+        if (databaseData) {
+            const totalQty = databaseData.items.reduce(
+                (total, product) => total + product.quantity,
+                0
+            );
+            setTotalQuantity(totalQty);
+        }
+    }, [databaseData]);
+
     useEffect(() => {
         fetchCartItems();
         const interval = setInterval(fetchCartItems, 4000);
@@ -84,7 +97,7 @@ export default function Cart() {
                     getProductData(item.product_name)
                 );
                 const itemsData = await Promise.all(itemsPromises);
-                setCartItems(itemsData as IProduct[]); // Type assertion
+                setCartItems(itemsData as IProduct[]);
             }
         };
 
@@ -92,11 +105,14 @@ export default function Cart() {
     }, [databaseData]);
 
     const subTotal = useMemo(() => {
-        if (cartItems === null) return 0;
+        if (cartItems === null || databaseData === null) return 0;
         return cartItems.reduce((total, val) => {
-            return total + val.price;
+            const product = databaseData.items.find((item) => item.product_name === val.name);
+            const quantityFromDatabase = product?.quantity || 0;
+            return total + val.price * quantityFromDatabase;
         }, 0);
-    }, [cartItems]);
+    }, [cartItems, databaseData]);
+
 
     if (databaseData === null || cartItems === null) {
         return (
@@ -146,7 +162,7 @@ export default function Cart() {
                                     <span>Total Quantities</span>
                                     {
                                         databaseData.items.length > 0 &&
-                                        <span>{cartItems.reduce((total, item) => total + databaseData.items[0].quantity, 0)} Items</span>
+                                        <span> {totalQuantity} Items</span>
                                     }
                                 </div>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
