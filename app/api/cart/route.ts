@@ -43,8 +43,9 @@ export const POST = async (request: NextRequest) => {
         const existingCartItem = await db.select({ quantity: cartTable.quantity })
             .from(cartTable)
             .where(eq(cartTable.product_name, productName))
+            .limit(1); // Limit the query to 1 result
 
-        if (existingCartItem) {
+        if (existingCartItem.length > 0) {
             const newQuantity = existingCartItem[0].quantity + quantity;
 
             const updateResult = await db.update(cartTable)
@@ -67,8 +68,6 @@ export const POST = async (request: NextRequest) => {
         throw new Error("Cannot insert/update the product in the database");
     }
 };
-
-
 
 
 export async function DELETE(req: NextRequest) {

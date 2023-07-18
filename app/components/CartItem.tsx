@@ -39,8 +39,8 @@ const CartItem: FC<{ item: Product }> = ({ item }) => {
 
     const handleDelete = async () => {
         try {
-            const productName = item.name; // Replace with the actual product name
-            const req = await fetch(`/api/cart`, {
+            const productName = item.name;
+            const req = await fetch(`/api/cart?product_name=${encodeURIComponent(productName)}`, {
                 method: 'DELETE',
                 cache: 'no-cache'
             });
