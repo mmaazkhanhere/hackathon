@@ -5,7 +5,6 @@ import CartItem from '../components/CartItem'
 import { client } from '@/sanity/lib/client'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useAppSelector } from '../store/hooks'
 import getStripePromise from '../lib/stripe'
 import { Image as IImage } from 'sanity'
 
@@ -27,23 +26,19 @@ interface IProduct {
     image: IImage
     price: number,
     quantity: number,
-    oneQuantityPrice: number
 }
 
 
-const getProductData = async (
-    product: string
-): Promise<IProduct | null> => {
+const getProductData = async (product: string): Promise<IProduct | null> => {
     try {
         const req = await client.fetch(
             `*[_type=='product' && name=='${product}']{
-        name,
-        sub_cat,
-        image,
-        price,
-        quantity,
-        oneQuantityPrice
-    }`
+            name,
+            sub_cat,
+            image,
+            price,
+            quantity,
+        }`
         );
         return req[0];
     } catch (error) {
@@ -58,7 +53,6 @@ export default function Cart() {
 
     const fetchCartItems = async () => {
         try {
-            // Fetch cart items from the database
             const response = await fetch('/api/cart/get');
             const data = await response.json();
             setDatabaseData(data);
@@ -70,7 +64,7 @@ export default function Cart() {
     const [totalQuantity, setTotalQuantity] = useState<number>(1);
 
     useEffect(() => {
-        // Calculate the total quantity whenever the databaseData changes
+
         if (databaseData) {
             const totalQty = databaseData.items.reduce(
                 (total, product) => total + product.quantity,
@@ -124,13 +118,26 @@ export default function Cart() {
 
     const handleCheckout = async () => {
         const stripe = await getStripePromise();
-        const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
+
+        const cartItemsWithQuantity = cartItems.map((item) => {
+            const databaseItem = databaseData.items.find(
+                (databaseItem) => databaseItem.product_name === item.name
+            );
+            if (databaseItem) {
+                return {
+                    ...item,
+                    quantity: databaseItem.quantity,
+                };
+            }
+            return item;
+        });
+
         const response = await fetch("/api/stripe-session/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             cache: "no-cache",
             body: JSON.stringify({
-                cartItems: cartItems,
+                cartItems: cartItemsWithQuantity,
             }),
         });
 
@@ -138,7 +145,8 @@ export default function Cart() {
         if (data.session) {
             stripe?.redirectToCheckout({ sessionId: data.session.id });
         }
-    }
+    };
+
 
     return (
         <main className=' max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] mt-[100px] px-6 md:px-10 mx-auto'>

@@ -24,7 +24,6 @@ interface IProduct {
 export default function Product({ params }: { params: { slug: string } }) {
 
     const [data, setData] = useState<IProduct | null>(null);
-    const dispatch = useAppDispatch();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -119,10 +118,6 @@ export default function Product({ params }: { params: { slug: string } }) {
                                 <button className='bg-black text-white px-8 py-2 cursor-pointer active:scale-95
                                 hover:scale-105'
                                     onClick={() => {
-                                        dispatch(
-                                            addToCart({ ...data, oneQuantityPrice: data.price })
-                                        );
-
                                         handleAddToCart();
                                         notify();
                                     }}>

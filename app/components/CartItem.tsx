@@ -16,7 +16,6 @@ interface IProduct {
     image: IImage
     price: number,
     quantity: number,
-    oneQuantityPrice: number
 }
 
 interface IDatabase {
