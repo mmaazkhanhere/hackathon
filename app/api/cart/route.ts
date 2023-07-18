@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, cartTable } from "@/app/lib/drizzle";
 import { eq } from "drizzle-orm"
 import { auth } from "@clerk/nextjs";
-import { PgColumn } from "drizzle-orm/pg-core";
 
 // export const POST = async (request: NextRequest) => {
 
@@ -29,6 +28,7 @@ import { PgColumn } from "drizzle-orm/pg-core";
 // };
 
 export const POST = async (request: NextRequest) => {
+
     const req = await request.json();
 
     try {
@@ -88,18 +88,19 @@ export async function DELETE(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
     try {
+
+        const requestBody = await req.json();
+
         const productName = req.nextUrl.searchParams.get("product_name") as string;
-        const itemQuantity = await db.select({ quantity: cartTable.quantity }).from(cartTable).where(eq(cartTable.product_name, productName));
+        const quantityReceived = requestBody.quantity;
 
-        if (itemQuantity) {
-            const newQuantity = itemQuantity[0].quantity + 1;
+        const res = await db.update(cartTable)
+            .set({ quantity: quantityReceived })
+            .where(eq(cartTable.product_name, productName))
+            .execute();
 
-            const res = await db.update(cartTable).set({ quantity: newQuantity })
-                .where(eq(cartTable.product_name, productName)).execute();
-
-            return NextResponse.json(res)
-        }
+        return NextResponse.json(res);
     } catch (error) {
-        throw new Error("Cannot update item quantity!")
+        throw new Error("Cannot update item quantity!");
     }
 }

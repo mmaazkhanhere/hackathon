@@ -41,22 +41,40 @@ const CartItem: React.FC<ICartItems> = ({ item, databaseData }) => {
 
     const product = databaseData.items.find((product) => product.product_name === item.name);
     const oneQuantityPrice = item.price * 1;
+    const quantityFromDatabase = product?.quantity || 0;
+    const [itemQuantity, setItemQuantity] = useState<number>(quantityFromDatabase);
 
-    const quantiyFromDatabase = product?.quantity || 1;
+    useEffect(() => {
+        handleQuantity(itemQuantity);
+    }, [itemQuantity]);
 
-    const [quantity, setQuantity] = useState<number>(quantiyFromDatabase);
 
-    const dispatch = useAppDispatch();
-
+    const handleQuantity = async (updateQuantity: number) => {
+        try {
+            const productName = item.name;
+            const req = await fetch(`/api/cart?product_name=${encodeURIComponent(productName)}`, {
+                method: 'PATCH',
+                cache: 'no-cache',
+                body: JSON.stringify({
+                    quantity: updateQuantity
+                })
+            });
+            if (!req.ok) {
+                throw new Error('Unexpected Error');
+            }
+        } catch (error) {
+            console.error('Error updating item:', error);
+        }
+    }
 
     const addQuantity = () => {
-        setQuantity(quantity + 1);
-        dispatch(updateCart({ ...item, quantity: quantity + 1 }));
+        setItemQuantity(itemQuantity + 1);
+        handleQuantity(itemQuantity);
     }
 
     const removeQuantity = () => {
-        setQuantity(quantity - 1)
-        dispatch(updateCart({ ...item, quantity: quantity - 1 }));
+        setItemQuantity(itemQuantity - 1)
+        handleQuantity(itemQuantity);
     };
 
     const handleDelete = async () => {
@@ -96,10 +114,10 @@ const CartItem: React.FC<ICartItems> = ({ item, databaseData }) => {
                         <button className=' bg-gray-200 p-1 cursor-pointer rounded-full hover:bg-[#fdfdfc] hover:border 
                         hover:border-black text-[14px]'
                             onClick={removeQuantity}
-                            disabled={quantity == 1}>
+                            disabled={itemQuantity == 1}>
                             -
                         </button>
-                        <span className='font-medium'>{quantity}</span>
+                        <span className='font-medium'>{itemQuantity}</span>
                         <button className=' bg-gray-200 p-1 cursor-pointer rounded-full hover:bg-[#fdfdfc] 
                         hover:border hover:border-black text-[14px]'
                             onClick={addQuantity}>
@@ -107,7 +125,7 @@ const CartItem: React.FC<ICartItems> = ({ item, databaseData }) => {
                         </button>
                     </div>
                     <span className='font-bold font-inconsolata'>
-                        {oneQuantityPrice * quantity} $
+                        {oneQuantityPrice * itemQuantity} $
                     </span>
                 </div>
                 <div className='text-[22px] cursor-pointer'>

@@ -72,22 +72,6 @@ export default function Product({ params }: { params: { slug: string } }) {
         }
     };
 
-
-    // const handleQuantity = async () => {
-    //     try {
-    //         const productName = data.name; // Replace with the actual product name
-    //         const req = await fetch(`/api/cart?product_name=${encodeURIComponent(productName)}`, {
-    //             method: 'PATCH',
-    //             cache: 'no-cache'
-    //         });
-    //         if (!req.ok) {
-    //             throw new Error('Unexpected Error');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error updating item:', error);
-    //     }
-    // }
-
     return (
         <>
             <ToastContainer />
