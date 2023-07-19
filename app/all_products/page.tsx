@@ -25,7 +25,7 @@ interface IProductType {
     image: IImage
 }
 
-export default async function Female() {
+export default async function AllProducts() {
 
     const data: IProductType[] = await getAllProduct();
 

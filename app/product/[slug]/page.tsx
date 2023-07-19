@@ -5,10 +5,8 @@ import { urlForImage } from '@/sanity/lib/image'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import { Image as IImage } from 'sanity'
-import { addToCart } from '@/app/store/cartSlice'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import { useAppDispatch } from '@/app/store/hooks'
 import { SignedIn, SignedOut } from '@clerk/nextjs'
 
 interface IProduct {

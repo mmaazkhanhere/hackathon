@@ -15,7 +15,7 @@ const deleteItems = async (userId: string | null) => {
     }
 }
 
-export default async function success() {
+export default async function Success() {
     const { userId } = auth();
     if (userId != null) {
         deleteItems(userId);

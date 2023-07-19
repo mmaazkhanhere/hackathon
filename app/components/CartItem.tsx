@@ -5,10 +5,7 @@ import React, { useState, FC, useEffect } from 'react'
 import { Image as IImage } from 'sanity'
 import { RiDeleteBin6Line } from 'react-icons/ri'
 import { urlForImage } from '@/sanity/lib/image'
-import { useAppDispatch } from '../store/hooks'
-import { updateCart } from '@/app/store/cartSlice'
-import { cartTable, db } from '../lib/drizzle'
-import { eq } from 'drizzle-orm'
+
 
 interface IProduct {
     name: string,

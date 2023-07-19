@@ -56,7 +56,10 @@ export async function DELETE(req: NextRequest) {
             .where(eq(cartTable.product_name, productName))
             .execute();
 
-        return NextResponse.json(res);
+        const response = NextResponse.json(res);
+        response.headers.set('Cache-Control', 'no-store, immutable');
+
+        return response;
 
     } catch (error) {
         console.error('Error deleting item:', error);

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 
-export default function failed() {
+export default function Failed() {
     //this page will be displayed when payment is failed
     return (
         <div className="min-h-[650px] flex items-center">
