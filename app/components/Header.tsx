@@ -49,6 +49,8 @@ export default function Header() {
         );
     }
 
+    console.log(databaseData)
+
     const handleMenuShow = () => {
         setMenu(true);
     }
