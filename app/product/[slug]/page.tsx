@@ -67,6 +67,7 @@ export default function Product({ params }: { params: { slug: string } }) {
             body: JSON.stringify({
                 product_name: data.name,
                 quantity: data.quantity,
+                price: data.price
             }),
         });
 

@@ -10,6 +10,7 @@ export const cartTable = pgTable("cart", {
     product_name: varchar("product_name", {
         length: 255
     }).notNull(),
+    price: integer("price").notNull(),
     quantity: integer("quantity").notNull()
 })
 

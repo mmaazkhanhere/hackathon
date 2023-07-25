@@ -41,6 +41,7 @@ export default function Header() {
     const handleMenuHide = () => {
         setMenu(false)
     }
+
     return (
 
         <section className=' max-w-[410px] md:max-w-[720px] lg:max-w-[1300px] mt-6 md:mt-12 lg:mt-8 mx-auto'>
@@ -71,12 +72,12 @@ export default function Header() {
                                 </svg>
                             </div>
                             <SignedIn>
-                                {cartList.length > 0 &&
+                                {/* {totalItems > 0 &&
                                     <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
                                 -top-4 left-6 flex items-center justify-center'>
-                                        {cartList.length}
+                                        {totalItems}
                                     </span>
-                                }
+                                } */}
                             </SignedIn>
                         </div>
                     </Link>
@@ -136,7 +137,7 @@ export default function Header() {
                                 <SignedIn>
                                     <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
                                 -top-4 left-6 flex items-center justify-center'>
-                                        {cartList.length}
+                                        {/* {totalItems} */}
                                     </span>
                                 </SignedIn>
                             </div>

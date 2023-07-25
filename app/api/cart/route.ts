@@ -35,6 +35,7 @@ export const POST = async (request: NextRequest) => {
             const insertResult = await db.insert(cartTable).values({
                 product_name: req.product_name,
                 quantity: req.quantity,
+                price: req.price,
                 user_id: userId
             }).returning().execute();
 

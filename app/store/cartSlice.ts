@@ -37,6 +37,7 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         addToCart: (state: CartState, action: PayloadAction<{ product: ICartItem, oneQuantityPrice: number }>) => {
+            console.log(state.cartItems)
             const item = state.cartItems.find((p) => p.name === action.payload.product.name);
             const existingItem = state.cartItems.find((item) => item.name === action.payload.product.name);
             if (item) {
