@@ -8,6 +8,8 @@ import { Image as IImage } from 'sanity'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { SignedIn, SignedOut } from '@clerk/nextjs'
+import { useAppDispatch } from '@/app/store/hooks'
+import { addToCart } from '@/app/store/cartSlice'
 
 interface IProduct {
     name: string;
@@ -22,6 +24,8 @@ interface IProduct {
 export default function Product({ params }: { params: { slug: string } }) {
 
     const [data, setData] = useState<IProduct | null>(null);
+
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,6 +47,8 @@ export default function Product({ params }: { params: { slug: string } }) {
             <Image src="/Logo.webp" alt='Logo Picture' width={200} height={200} />
         </div>;
     }
+
+    const oneQuantityPrice = data.price * 1
 
     const notify = () => {
         toast.success("Item added to the cart!", {
@@ -67,6 +73,11 @@ export default function Product({ params }: { params: { slug: string } }) {
         if (!res.ok) {
             throw new Error("Unexpected Error");
         }
+    };
+
+    const handleAddCart = () => {
+        handleAddToCart();
+        dispatch(addToCart({ product: data, oneQuantityPrice: oneQuantityPrice }))
     };
 
     return (
@@ -116,7 +127,7 @@ export default function Product({ params }: { params: { slug: string } }) {
                                 <button className='bg-black text-white px-8 py-2 cursor-pointer active:scale-95
                                 hover:scale-105'
                                     onClick={() => {
-                                        handleAddToCart();
+                                        handleAddCart()
                                         notify();
                                     }}>
                                     Add to Cart

@@ -116,8 +116,6 @@ export default function Cart() {
         );
     }
 
-    console.log(databaseData)
-
     const handleCheckout = async () => {
         const stripe = await getStripePromise();
 

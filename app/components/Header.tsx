@@ -4,6 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { SignInButton, UserButton, SignedIn, SignedOut } from '@clerk/nextjs'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { getData } from '../store/cartSlice'
 
 interface IResponse {
     id: number,
@@ -19,37 +21,18 @@ interface IResponseObj {
 export default function Header() {
 
     const [menu, setMenu] = useState(false);
-    const [databaseData, setDatabaseData] = useState<IResponseObj | null>(null);
+    const cartList = useAppSelector((state) => state.cart.cartItems)
 
-    const fetchCartItems = async () => {
-        try {
-            // Fetch cart items from the database
-            const response = await fetch('/api/cart/get');
-            const data = await response.json();
-            setDatabaseData(data);
-        } catch (error) {
-            console.error('Error fetching cart items:', error);
-        }
-    };
+    const dispatch = useAppDispatch();
+    const totalItems = useAppSelector((state => state.cart.cartItems.length))
 
     useEffect(() => {
-        fetchCartItems();
-        const interval = setInterval(fetchCartItems, 4000);
+        dispatch(getData());
+    }, [dispatch, totalItems])
 
-        return () => {
-            clearInterval(interval);
-        };
 
-    }, []);
 
-    if (databaseData === null) {
-        return (
-            <div className='w-full h-screen flex items-center justify-center'>
-            </div>
-        );
-    }
-
-    console.log(databaseData)
+    console.log(totalItems)
 
     const handleMenuShow = () => {
         setMenu(true);
@@ -88,10 +71,10 @@ export default function Header() {
                                 </svg>
                             </div>
                             <SignedIn>
-                                {databaseData.items.length > 0 &&
+                                {cartList.length > 0 &&
                                     <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
                                 -top-4 left-6 flex items-center justify-center'>
-                                        {databaseData.items.length}
+                                        {cartList.length}
                                     </span>
                                 }
                             </SignedIn>
@@ -153,7 +136,7 @@ export default function Header() {
                                 <SignedIn>
                                     <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
                                 -top-4 left-6 flex items-center justify-center'>
-                                        {databaseData.items.length}
+                                        {cartList.length}
                                     </span>
                                 </SignedIn>
                             </div>
