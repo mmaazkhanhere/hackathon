@@ -7,18 +7,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import getStripePromise from '../lib/stripe'
 import { Image as IImage } from 'sanity'
-
-
-interface IResponse {
-    id: number,
-    user_id: string,
-    product_name: string,
-    quantity: number
-}
-
-interface IResponseObj {
-    items: IResponse[]
-}
+import { useAppSelector } from '../store/hooks'
+import { v4 as uuidv4 } from 'uuid';
 
 interface IProduct {
     name: string,
@@ -26,19 +16,20 @@ interface IProduct {
     image: IImage
     price: number,
     quantity: number,
+    _id?: string
 }
-
 
 const getProductData = async (product: string): Promise<IProduct | null> => {
     try {
         const req = await client.fetch(
             `*[_type=='product' && name=='${product}']{
-            name,
-            sub_cat,
-            image,
-            price,
-            quantity,
-        }`
+        name,
+        sub_cat,
+        image,
+        price,
+        quantity,
+        _id
+    }`
         );
         return req[0];
     } catch (error) {
@@ -48,67 +39,43 @@ const getProductData = async (product: string): Promise<IProduct | null> => {
 };
 
 export default function Cart() {
-    const [databaseData, setDatabaseData] = useState<IResponseObj | null>(null);
+
     const [cartItems, setCartItems] = useState<IProduct[] | null>(null);
-
-    const fetchCartItems = async () => {
-        try {
-            const response = await fetch('/api/cart/get');
-            const data = await response.json();
-            setDatabaseData(data);
-        } catch (error) {
-            console.error('Error fetching cart items:', error);
-        }
-    };
-
+    const database = useAppSelector((state) => state.cart.cartItems);
     const [totalQuantity, setTotalQuantity] = useState<number>(1);
-
     useEffect(() => {
-
-        if (databaseData) {
-            const totalQty = databaseData.items.reduce(
+        if (cartItems) {
+            const totalQty = cartItems.reduce(
                 (total, product) => total + product.quantity,
                 0
             );
             setTotalQuantity(totalQty);
         }
-    }, [databaseData]);
+    }, [cartItems]);
 
     useEffect(() => {
-        fetchCartItems();
-        const interval = setInterval(fetchCartItems, 4000);
-
-        return () => {
-            clearInterval(interval);
-        };
-
-    }, []);
-
-    useEffect(() => {
+        // Function to fetch product data for cart items
         const fetchProductItems = async () => {
-            if (databaseData) {
-                const itemsPromises = databaseData.items.map((item) =>
-                    getProductData(item.product_name)
-                );
-                const itemsData = await Promise.all(itemsPromises);
-                setCartItems(itemsData as IProduct[]);
-            }
+            const itemsPromises = database.map((item) => getProductData(item.product_name));
+            const itemsData = await Promise.all(itemsPromises);
+            setCartItems(itemsData as IProduct[]);
         };
 
+        // Fetch product data only when the "database" changes (i.e., when a new item is added or a cart item is deleted)
         fetchProductItems();
-    }, [databaseData]);
+    }, [database]);
 
     const subTotal = useMemo(() => {
-        if (cartItems === null || databaseData === null) return 0;
+        if (cartItems === null) return 0;
         return cartItems.reduce((total, val) => {
-            const product = databaseData.items.find((item) => item.product_name === val.name);
+            const product = database.find((item) => item.product_name === val.name);
             const quantityFromDatabase = product?.quantity || 0;
             return total + val.price * quantityFromDatabase;
         }, 0);
-    }, [cartItems, databaseData]);
+    }, [cartItems, database]);
 
 
-    if (databaseData === null || cartItems === null) {
+    if (cartItems === null) {
         return (
             <div className='w-full h-screen flex items-center justify-center'>
                 <Image src='/Logo.webp' alt='Logo Picture' width={200} height={200} />
@@ -116,38 +83,36 @@ export default function Cart() {
         );
     }
 
-    console.log(databaseData)
+    // const handleCheckout = async () => {
+    //     const stripe = await getStripePromise();
 
-    const handleCheckout = async () => {
-        const stripe = await getStripePromise();
+    //     const cartItemsWithQuantity = cartItems.map((item) => {
+    //         const databaseItem = databaseData.items.find(
+    //             (databaseItem) => databaseItem.product_name === item.name
+    //         );
+    //         if (databaseItem) {
+    //             return {
+    //                 ...item,
+    //                 quantity: databaseItem.quantity,
+    //             };
+    //         }
+    //         return item;
+    //     });
 
-        const cartItemsWithQuantity = cartItems.map((item) => {
-            const databaseItem = databaseData.items.find(
-                (databaseItem) => databaseItem.product_name === item.name
-            );
-            if (databaseItem) {
-                return {
-                    ...item,
-                    quantity: databaseItem.quantity,
-                };
-            }
-            return item;
-        });
+    //     const response = await fetch("/api/stripe-session/", {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         cache: "no-cache",
+    //         body: JSON.stringify({
+    //             cartItems: cartItemsWithQuantity,
+    //         }),
+    //     });
 
-        const response = await fetch("/api/stripe-session/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-cache",
-            body: JSON.stringify({
-                cartItems: cartItemsWithQuantity,
-            }),
-        });
-
-        const data = await response.json();
-        if (data.session) {
-            stripe?.redirectToCheckout({ sessionId: data.session.id });
-        }
-    };
+    //     const data = await response.json();
+    //     if (data.session) {
+    //         stripe?.redirectToCheckout({ sessionId: data.session.id });
+    //     }
+    // };
 
 
     return (
@@ -158,7 +123,7 @@ export default function Cart() {
                     <div className='flex flex-col lg:flex-row lg:items-start '>
                         <section className='flex flex-col mt-[50px] gap-y-6 lg:w-[80%] mr-10'>
                             {cartItems.map((item) => (
-                                <CartItem item={item} key={item.name} databaseData={databaseData} />
+                                <CartItem item={item} key={item.name} database={database} />
                             ))}
                         </section>
                         <section className=' bg-[#fdfdfd] mt-[50px] lg:w-[30%]'>
@@ -171,7 +136,7 @@ export default function Cart() {
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
                                     <span>Total Quantities</span>
                                     {
-                                        databaseData.items.length > 0 &&
+                                        cartItems.length > 0 &&
                                         <span> {totalQuantity} Items</span>
                                     }
                                 </div>
@@ -180,7 +145,8 @@ export default function Cart() {
                                     <span className='font-bold'>{subTotal} $</span>
                                 </div>
                                 <button className='bg-black text-white py-3 font-inconsolata rounded-lg'
-                                    onClick={handleCheckout}>
+                                // onClick={handleCheckout}
+                                >
                                     Process to Checkout
                                 </button>
                             </div>

@@ -14,25 +14,23 @@ interface IResponse {
     quantity: number
 }
 
-interface IResponseObj {
-    items: IResponse[]
-}
 
 export default function Header() {
 
     const [menu, setMenu] = useState(false);
     const cartList = useAppSelector((state) => state.cart.cartItems)
+    console.log("Data recieved in the database: ", cartList)
 
     const dispatch = useAppDispatch();
     const totalItems = useAppSelector((state => state.cart.cartItems.length))
 
     useEffect(() => {
         dispatch(getData());
-    }, [dispatch, totalItems])
+    }, [totalItems])
 
 
 
-    console.log(totalItems)
+    console.log("Total items: ", totalItems)
 
     const handleMenuShow = () => {
         setMenu(true);
@@ -72,12 +70,12 @@ export default function Header() {
                                 </svg>
                             </div>
                             <SignedIn>
-                                {/* {totalItems > 0 &&
+                                {totalItems > 0 &&
                                     <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
                                 -top-4 left-6 flex items-center justify-center'>
                                         {totalItems}
                                     </span>
-                                } */}
+                                }
                             </SignedIn>
                         </div>
                     </Link>
@@ -137,7 +135,7 @@ export default function Header() {
                                 <SignedIn>
                                     <span className='absolute text-white bg-red-500 rounded-full w-[20px] h-[20px] text-[14px] 
                                 -top-4 left-6 flex items-center justify-center'>
-                                        {/* {totalItems} */}
+                                        {totalItems}
                                     </span>
                                 </SignedIn>
                             </div>

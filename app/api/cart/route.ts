@@ -38,7 +38,7 @@ export const POST = async (request: NextRequest) => {
                 price: req.price,
                 user_id: userId
             }).returning().execute();
-
+            console.log({ insertResult })
             return NextResponse.json({ insertResult });
         }
     } catch (error) {

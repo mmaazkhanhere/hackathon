@@ -9,7 +9,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { SignedIn, SignedOut } from '@clerk/nextjs'
 import { useAppDispatch } from '@/app/store/hooks'
-import { addToCart } from '@/app/store/cartSlice'
+import { addCartItem } from '@/app/store/cartSlice'
 
 interface IProduct {
     name: string;
@@ -19,7 +19,6 @@ interface IProduct {
     product_info: string;
     quantity: number;
 }
-
 
 export default function Product({ params }: { params: { slug: string } }) {
 
@@ -62,23 +61,19 @@ export default function Product({ params }: { params: { slug: string } }) {
     };
 
     const handleAddToCart = async () => {
-        const res = await fetch("/api/cart", {
-            method: "POST",
-            body: JSON.stringify({
-                product_name: data.name,
-                quantity: data.quantity,
-                price: data.price
-            }),
-        });
-
-        if (!res.ok) {
-            throw new Error("Unexpected Error");
+        try {
+            await dispatch(
+                addCartItem({
+                    product_name: data.name,
+                    quantity: data.quantity,
+                    price: data.price,
+                })
+            );
+            // You can handle success message or any other logic here if needed
+        } catch (error) {
+            // Handle error here if needed
+            console.error("Error adding item to cart:", error);
         }
-    };
-
-    const handleAddCart = () => {
-        handleAddToCart();
-        dispatch(addToCart({ product: data, oneQuantityPrice: oneQuantityPrice }))
     };
 
     return (
@@ -128,7 +123,7 @@ export default function Product({ params }: { params: { slug: string } }) {
                                 <button className='bg-black text-white px-8 py-2 cursor-pointer active:scale-95
                                 hover:scale-105'
                                     onClick={() => {
-                                        handleAddCart()
+                                        handleAddToCart()
                                         notify();
                                     }}>
                                     Add to Cart
