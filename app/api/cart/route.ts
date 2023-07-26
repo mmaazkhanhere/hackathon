@@ -3,6 +3,27 @@ import { db, cartTable } from "@/app/lib/drizzle";
 import { eq } from "drizzle-orm"
 import { auth } from "@clerk/nextjs";
 
+export const GET = async (request: NextRequest, { params: { userId } }: { params: { userId: string } }) => {
+    try {
+        if (!userId) {
+            throw new Error("User ID not provided");
+        }
+
+        const items = await db
+            .select()
+            .from(cartTable)
+            .where(eq(cartTable.user_id, userId))
+            .execute();
+
+        const response = NextResponse.json({ items });
+        response.headers.set("Cache-Control", "no-store, immutable");
+
+        return response;
+    } catch (error) {
+        console.log(error);
+        throw new Error("Cannot GET the response");
+    }
+};
 
 export const POST = async (request: NextRequest) => {
 

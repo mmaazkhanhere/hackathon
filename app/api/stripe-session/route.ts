@@ -21,7 +21,6 @@ export async function POST(request: NextRequest) {
 
     const { cartItems } = await request.json();
 
-    console.log(cartItems)
     try {
         if (cartItems.length > 0) {
             const session = await stripe.checkout.sessions.create({

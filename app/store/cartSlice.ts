@@ -95,12 +95,14 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import { Image as IImage } from "sanity";
+import { auth } from "@clerk/nextjs";
 import axios from 'axios';
 
 interface IDatabaseData {
     product_name: string,
     price: number;
     quantity: number;
+    user_id?: number;
 }
 
 interface ICartState {
@@ -115,14 +117,19 @@ const initialState: ICartState = {
     error: null
 };
 
-export const getData = createAsyncThunk("cart/getData", async () => {
-    const res = await fetch('/api/cart/get');
-    if (!res.ok) {
-        throw new Error("Cannot fetch data from the database")
+export const getData = createAsyncThunk("cart/getData", async (userId: string) => {
+    try {
+        const res = await fetch(`/api/cart/${userId}`);
+        if (!res.ok) {
+            throw new Error("Cannot fetch data from the database");
+        }
+
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        throw new Error("Cannot fetch data from the database");
     }
-    const data = await res.json();
-    return data;
-})
+});
 
 export const addCartItem = createAsyncThunk("cart/addCartItem", async (data: { product_name: string, quantity: number, price: number }, { getState }) => {
     try {
@@ -179,17 +186,20 @@ const cartSlice = createSlice({
     extraReducers: (builder) => {
         //case for fetching item
         builder.addCase(getData.pending, (state) => {
-            state.isLoading = true
-        })
-        builder.addCase(getData.fulfilled, (state, action) => {
-            const { items } = action.payload
-            state.cartItems = items
-            state.isLoading = false;
+            state.isLoading = true;
+            state.error = null;
         });
+
+        builder.addCase(getData.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.error = null;
+            state.cartItems = action.payload.items; // Assuming the data is an object with an "items" property
+        });
+
         builder.addCase(getData.rejected, (state, action) => {
             state.isLoading = false;
-            state.error = action.error
-        })
+            state.error = "Cannot fetch data from the database";
+        });
         //case for adding data into the cart
         builder.addCase(addCartItem.pending, (state, action) => {
             state.isLoading = true;

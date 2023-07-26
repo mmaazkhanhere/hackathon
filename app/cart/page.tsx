@@ -83,36 +83,34 @@ export default function Cart() {
         );
     }
 
-    // const handleCheckout = async () => {
-    //     const stripe = await getStripePromise();
+    const handleCheckout = async () => {
+        const stripe = await getStripePromise();
 
-    //     const cartItemsWithQuantity = cartItems.map((item) => {
-    //         const databaseItem = databaseData.items.find(
-    //             (databaseItem) => databaseItem.product_name === item.name
-    //         );
-    //         if (databaseItem) {
-    //             return {
-    //                 ...item,
-    //                 quantity: databaseItem.quantity,
-    //             };
-    //         }
-    //         return item;
-    //     });
+        const cartItemsWithQuantity = database.map((item) => {
+            const cartItem = cartItems.find((cartItem) => cartItem.name === item.product_name);
+            if (cartItem) {
+                return {
+                    ...cartItem,
+                    quantity: item.quantity,
+                };
+            }
+            return item;
+        });
 
-    //     const response = await fetch("/api/stripe-session/", {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         cache: "no-cache",
-    //         body: JSON.stringify({
-    //             cartItems: cartItemsWithQuantity,
-    //         }),
-    //     });
+        const response = await fetch("/api/stripe-session/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-cache",
+            body: JSON.stringify({
+                cartItems: cartItemsWithQuantity,
+            }),
+        });
 
-    //     const data = await response.json();
-    //     if (data.session) {
-    //         stripe?.redirectToCheckout({ sessionId: data.session.id });
-    //     }
-    // };
+        const data = await response.json();
+        if (data.session) {
+            stripe?.redirectToCheckout({ sessionId: data.session.id });
+        }
+    };
 
 
     return (
@@ -145,7 +143,7 @@ export default function Cart() {
                                     <span className='font-bold'>{subTotal} $</span>
                                 </div>
                                 <button className='bg-black text-white py-3 font-inconsolata rounded-lg'
-                                // onClick={handleCheckout}
+                                    onClick={handleCheckout}
                                 >
                                     Process to Checkout
                                 </button>

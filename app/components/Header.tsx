@@ -6,31 +6,26 @@ import React, { useEffect, useState } from 'react'
 import { SignInButton, UserButton, SignedIn, SignedOut } from '@clerk/nextjs'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { getData } from '../store/cartSlice'
-
-interface IResponse {
-    id: number,
-    user_id: string,
-    product_name: string,
-    quantity: number
-}
+import { useUser } from '@clerk/nextjs';
 
 
 export default function Header() {
 
     const [menu, setMenu] = useState(false);
-    const cartList = useAppSelector((state) => state.cart.cartItems)
-    console.log("Data recieved in the database: ", cartList)
+    const user = useUser(); // Fetch the user data using useUser
+    const userId = user ? user.user?.id : null; // Use the user ID from the fetched user data
+    console.log("User ID: ", userId);
 
     const dispatch = useAppDispatch();
     const totalItems = useAppSelector((state => state.cart.cartItems.length))
 
     useEffect(() => {
-        dispatch(getData());
-    }, [totalItems])
+        if (userId) {
+            dispatch(getData(userId)); // No need to pass the user_id, it will be fetched inside the asyncThunk
+        }
+    }, [dispatch, totalItems]);
 
-
-
-    console.log("Total items: ", totalItems)
+    console.log(totalItems)
 
     const handleMenuShow = () => {
         setMenu(true);
