@@ -145,6 +145,26 @@ export const addCartItem = createAsyncThunk("cart/addCartItem", async (data: { p
     }
 });
 
+export const updateCart = createAsyncThunk("cart/updateCart", async (data: { product_name: string, quantity: number }) => {
+    try {
+        const res = await axios.patch(`/api/cart?product_name=${encodeURIComponent(data.product_name)}`, {
+            quantity: data.quantity
+        });
+        return res.data;
+    } catch (error) {
+        throw new Error("Cannot update product quantity!")
+    }
+})
+
+export const deleteItem = createAsyncThunk("cart/deleteItem", async (data: { product_name: string }) => {
+    try {
+        const res = await axios.delete(`/api/cart?product_name=${encodeURIComponent(data.product_name)}`)
+        return res.data
+    } catch (error) {
+        throw new Error("Cannot delete item!")
+    }
+})
+
 
 const cartSlice = createSlice({
     name: 'cart',
@@ -157,6 +177,7 @@ const cartSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        //case for fetching item
         builder.addCase(getData.pending, (state) => {
             state.isLoading = true
         })
@@ -168,6 +189,10 @@ const cartSlice = createSlice({
         builder.addCase(getData.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.error
+        })
+        //case for adding data into the cart
+        builder.addCase(addCartItem.pending, (state, action) => {
+            state.isLoading = true;
         })
         builder.addCase(addCartItem.fulfilled, (state, action) => {
             const newItem = action.payload;
@@ -182,6 +207,37 @@ const cartSlice = createSlice({
                 existingItem.price = newItem.price;
             }
         });
+        builder.addCase(addCartItem.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.error
+        })
+        //case for updating item in the cart
+        builder.addCase(updateCart.pending, (state) => {
+            state.isLoading = true;
+        })
+        builder.addCase(updateCart.fulfilled, (state, action) => {
+            // Update the cartItems array with the updated item quantity
+            const updatedItem = action.payload;
+            const existingItem = state.cartItems.find(item => item.product_name === updatedItem.product_name);
+            if (existingItem) {
+                existingItem.quantity = updatedItem.quantity;
+            }
+        });
+        builder.addCase(updateCart.rejected, (state, action) => {
+            state.isLoading = false;
+        })
+        //case for delete item
+        builder.addCase(deleteItem.pending, (state) => {
+            state.isLoading = true
+        })
+        builder.addCase(deleteItem.fulfilled, (state, action) => {
+            // Remove the deleted item from the cartItems array
+            const deletedProductName = action.meta.arg.product_name;
+            state.cartItems = state.cartItems.filter(item => item.product_name !== deletedProductName);
+        });
+        builder.addCase(deleteItem.rejected, (state, action) => {
+            state.isLoading = false
+        })
     }
 });
 

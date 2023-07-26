@@ -6,7 +6,7 @@ import { Image as IImage } from 'sanity'
 import { RiDeleteBin6Line } from 'react-icons/ri'
 import { urlForImage } from '@/sanity/lib/image'
 import { useAppDispatch } from '../store/hooks'
-import { removeFromCart } from '../store/cartSlice'
+import { deleteItem, removeFromCart, updateCart } from '../store/cartSlice'
 import { ToastContainer, toast } from 'react-toastify'
 
 
@@ -43,22 +43,12 @@ const CartItem: React.FC<ICartItems> = ({ item, database }) => {
         handleQuantity(itemQuantity);
     }, [itemQuantity]);
 
-
-    const handleQuantity = async (updateQuantity: number) => {
+    const handleQuantity = async (newQuantity: number) => {
         try {
-            const productName = item.name;
-            const req = await fetch(`/api/cart?product_name=${encodeURIComponent(productName)}`, {
-                method: 'PATCH',
-                cache: 'no-cache',
-                body: JSON.stringify({
-                    quantity: updateQuantity
-                })
-            });
-            if (!req.ok) {
-                throw new Error('Unexpected Error');
-            }
+            const product = item.name;
+            await dispatch(updateCart({ product_name: product, quantity: newQuantity }));
         } catch (error) {
-            console.error('Error updating item:', error);
+            console.error("Cannot update item: ", error)
         }
     }
 
@@ -86,19 +76,13 @@ const CartItem: React.FC<ICartItems> = ({ item, database }) => {
     const handleDelete = async () => {
         try {
             const productName = item.name;
-            const req = await fetch(`/api/cart?product_name=${encodeURIComponent(productName)}`, {
-                method: 'DELETE',
-                cache: 'no-cache'
-            });
-            if (!req.ok) {
-                throw new Error('Unexpected Error');
-            }
+            await dispatch(deleteItem({ product_name: productName })); // Dispatch the deleteItem asyncThunk
         } catch (error) {
             console.error('Error deleting item:', error);
         }
     };
 
-    const deleteItem = () => {
+    const removeItem = () => {
         handleDelete();
         dispatch(removeFromCart(item.name));
         notify();
@@ -143,7 +127,7 @@ const CartItem: React.FC<ICartItems> = ({ item, database }) => {
                         </span>
                     </div>
                     <div className='text-[22px] cursor-pointer'>
-                        <RiDeleteBin6Line onClick={deleteItem}
+                        <RiDeleteBin6Line onClick={removeItem}
                         />
                     </div>
                 </div>
