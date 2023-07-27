@@ -23,6 +23,7 @@ interface IProduct {
 export default function Product({ params }: { params: { slug: string } }) {
 
     const [data, setData] = useState<IProduct | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const dispatch = useAppDispatch();
 
@@ -47,8 +48,6 @@ export default function Product({ params }: { params: { slug: string } }) {
         </div>;
     }
 
-    const oneQuantityPrice = data.price * 1
-
     const notify = () => {
         toast.success("Item added to the cart!", {
             position: 'bottom-right',
@@ -62,6 +61,7 @@ export default function Product({ params }: { params: { slug: string } }) {
 
     const handleAddToCart = async () => {
         try {
+            setIsLoading(true);
             await dispatch(
                 addCartItem({
                     product_name: data.name,
@@ -69,7 +69,7 @@ export default function Product({ params }: { params: { slug: string } }) {
                     price: data.price,
                 })
             );
-            // You can handle success message or any other logic here if needed
+            setIsLoading(false)
         } catch (error) {
             // Handle error here if needed
             console.error("Error adding item to cart:", error);
@@ -120,13 +120,15 @@ export default function Product({ params }: { params: { slug: string } }) {
                                 </button>
                             </SignedOut>
                             <SignedIn>
-                                <button className='bg-black text-white px-8 py-2 cursor-pointer active:scale-95
-                                hover:scale-105'
+                                <button
+                                    className='bg-black text-white px-8 py-2 cursor-pointer active:scale-95 hover:scale-105'
+                                    disabled={isLoading} // Set the disabled attribute based on isLoading state
                                     onClick={() => {
-                                        handleAddToCart()
+                                        handleAddToCart();
                                         notify();
-                                    }}>
-                                    Add to Cart
+                                    }}
+                                >
+                                    {isLoading ? "Adding..." : "Add to Cart"}
                                 </button>
                             </SignedIn>
 

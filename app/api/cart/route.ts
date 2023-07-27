@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, cartTable } from "@/app/lib/drizzle";
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { auth } from "@clerk/nextjs";
 
 export const GET = async (request: NextRequest) => {
@@ -32,7 +32,6 @@ export const GET = async (request: NextRequest) => {
 
 
 export const POST = async (request: NextRequest) => {
-
     const req = await request.json();
 
     try {
@@ -44,9 +43,10 @@ export const POST = async (request: NextRequest) => {
         const productName = req.product_name;
         const quantity = req.quantity;
 
+        // Check if the item already exists in the user's cart
         const existingCartItem = await db.select({ quantity: cartTable.quantity })
             .from(cartTable)
-            .where(eq(cartTable.product_name, productName))
+            .where(and(eq(cartTable.product_name, productName), eq(cartTable.user_id, userId)))
             .limit(1); // Limit the query to 1 result
 
         if (existingCartItem.length > 0) {
@@ -54,7 +54,7 @@ export const POST = async (request: NextRequest) => {
 
             const updateResult = await db.update(cartTable)
                 .set({ quantity: newQuantity })
-                .where(eq(cartTable.product_name, productName))
+                .where(and(eq(cartTable.product_name, productName), eq(cartTable.user_id, userId)))
                 .execute();
 
             return NextResponse.json({ updateResult });
@@ -75,13 +75,19 @@ export const POST = async (request: NextRequest) => {
 };
 
 
+
 export async function DELETE(req: NextRequest) {
     try {
         const productName = req.nextUrl.searchParams.get("product_name") as string;
 
+        const { userId } = auth();
+        if (!userId) {
+            return NextResponse.redirect('/sign-in');
+        }
+
         const res = await db
             .delete(cartTable)
-            .where(eq(cartTable.product_name, productName))
+            .where(and(eq(cartTable.product_name, productName), eq(cartTable.user_id, userId)))
             .execute();
 
         const response = NextResponse.json(res);
@@ -94,17 +100,21 @@ export async function DELETE(req: NextRequest) {
     }
 }
 
+
 export async function PATCH(req: NextRequest) {
     try {
-
         const requestBody = await req.json();
-
         const productName = req.nextUrl.searchParams.get("product_name") as string;
         const quantityReceived = requestBody.quantity;
 
+        const { userId } = auth();
+        if (!userId) {
+            return NextResponse.redirect('/sign-in');
+        }
+
         const res = await db.update(cartTable)
             .set({ quantity: quantityReceived })
-            .where(eq(cartTable.product_name, productName))
+            .where(and(eq(cartTable.product_name, productName), eq(cartTable.user_id, userId)))
             .execute();
 
         return NextResponse.json(res);
