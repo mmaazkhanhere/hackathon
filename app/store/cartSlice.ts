@@ -118,18 +118,23 @@ const initialState: ICartState = {
 };
 
 export const getData = createAsyncThunk("cart/getData", async (userId: string) => {
+    console.log("User ID received in cart slice: ", userId);
     try {
-        const res = await fetch(`/api/cart/${userId}`);
-        if (!res.ok) {
-            throw new Error("Cannot fetch data from the database");
+        if (userId) {
+            console.log(userId)
+            const res = await fetch(`/api/cart?userId=${userId}`, {
+                method: "GET",
+            });
+            const data = await res.json();
+            console.log(data)
+            return data;
         }
 
-        const data = await res.json();
-        return data;
     } catch (error) {
         throw new Error("Cannot fetch data from the database");
     }
 });
+
 
 export const addCartItem = createAsyncThunk("cart/addCartItem", async (data: { product_name: string, quantity: number, price: number }, { getState }) => {
     try {

@@ -3,8 +3,12 @@ import { db, cartTable } from "@/app/lib/drizzle";
 import { eq } from "drizzle-orm"
 import { auth } from "@clerk/nextjs";
 
-export const GET = async (request: NextRequest, { params: { userId } }: { params: { userId: string } }) => {
+export const GET = async (request: NextRequest) => {
+    console.log(request);
     try {
+        const url = new URL(request.url);
+        const userId = url.searchParams.get("userId");
+        console.log("User ID received in the API: ", userId);
         if (!userId) {
             throw new Error("User ID not provided");
         }
@@ -24,6 +28,8 @@ export const GET = async (request: NextRequest, { params: { userId } }: { params
         throw new Error("Cannot GET the response");
     }
 };
+
+
 
 export const POST = async (request: NextRequest) => {
 

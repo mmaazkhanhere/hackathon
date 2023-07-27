@@ -3,10 +3,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { SignInButton, UserButton, SignedIn, SignedOut } from '@clerk/nextjs'
+import { SignInButton, UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { getData } from '../store/cartSlice'
-import { useUser } from '@clerk/nextjs';
 
 
 export default function Header() {
@@ -21,9 +20,10 @@ export default function Header() {
 
     useEffect(() => {
         if (userId) {
-            dispatch(getData(userId)); // No need to pass the user_id, it will be fetched inside the asyncThunk
+            console.log(userId)
+            dispatch(getData(userId));
         }
-    }, [dispatch, totalItems]);
+    }, [dispatch, totalItems, userId]);
 
     console.log(totalItems)
 
