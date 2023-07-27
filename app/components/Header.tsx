@@ -13,19 +13,15 @@ export default function Header() {
     const [menu, setMenu] = useState(false);
     const user = useUser(); // Fetch the user data using useUser
     const userId = user ? user.user?.id : null; // Use the user ID from the fetched user data
-    console.log("User ID: ", userId);
 
     const dispatch = useAppDispatch();
     const totalItems = useAppSelector((state => state.cart.cartItems.length))
 
     useEffect(() => {
         if (userId) {
-            console.log(userId)
             dispatch(getData(userId));
         }
     }, [dispatch, totalItems, userId]);
-
-    console.log(totalItems)
 
     const handleMenuShow = () => {
         setMenu(true);
