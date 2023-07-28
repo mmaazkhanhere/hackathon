@@ -4,11 +4,9 @@ import { and, eq } from "drizzle-orm"
 import { auth } from "@clerk/nextjs";
 
 export const GET = async (request: NextRequest) => {
-    console.log(request);
     try {
         const url = new URL(request.url);
         const userId = url.searchParams.get("userId");
-        console.log("User ID received in the API: ", userId);
         if (!userId) {
             throw new Error("User ID not provided");
         }
@@ -106,19 +104,36 @@ export async function PATCH(req: NextRequest) {
         const requestBody = await req.json();
         const productName = req.nextUrl.searchParams.get("product_name") as string;
         const quantityReceived = requestBody.quantity;
-
         const { userId } = auth();
         if (!userId) {
             return NextResponse.redirect('/sign-in');
         }
 
-        const res = await db.update(cartTable)
+        const cartItem = await db.select()
+            .from(cartTable)
+            .where(and(eq(cartTable.product_name, productName), eq(cartTable.user_id, userId)))
+            .execute();
+
+        if (!cartItem || cartItem.length === 0) {
+            return new NextResponse("Cart item not found.", { status: 404 });
+        }
+
+        await db.update(cartTable)
             .set({ quantity: quantityReceived })
             .where(and(eq(cartTable.product_name, productName), eq(cartTable.user_id, userId)))
             .execute();
 
-        return NextResponse.json(res);
+        const updatedCartItem = await db.select()
+            .from(cartTable)
+            .where(and(eq(cartTable.product_name, productName), eq(cartTable.user_id, userId)))
+            .execute();
+
+        // Return the updated cart item in the response
+        return NextResponse.json(updatedCartItem[0]);
     } catch (error) {
-        throw new Error("Cannot update item quantity!");
+        console.error(error);
+        return new NextResponse("Cannot update item quantity.", { status: 500 });
     }
 }
+
+

@@ -8,8 +8,6 @@ import Image from 'next/image'
 import getStripePromise from '../lib/stripe'
 import { Image as IImage } from 'sanity'
 import { useAppSelector } from '../store/hooks'
-import { v4 as uuidv4 } from 'uuid';
-
 interface IProduct {
     name: string,
     sub_cat: string,
@@ -43,15 +41,6 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState<IProduct[] | null>(null);
     const database = useAppSelector((state) => state.cart.cartItems);
     const [totalQuantity, setTotalQuantity] = useState<number>(1);
-    useEffect(() => {
-        if (cartItems) {
-            const totalQty = cartItems.reduce(
-                (total, product) => total + product.quantity,
-                0
-            );
-            setTotalQuantity(totalQty);
-        }
-    }, [cartItems]);
 
     useEffect(() => {
         // Function to fetch product data for cart items
@@ -64,6 +53,15 @@ export default function Cart() {
         // Fetch product data only when the "database" changes (i.e., when a new item is added or a cart item is deleted)
         fetchProductItems();
     }, [database]);
+
+
+    useEffect(() => {
+        if (database) {
+            const totalQty = database.reduce((total, item) => total + item.quantity, 0);
+            setTotalQuantity(totalQty);
+        }
+    }, [database, totalQuantity]);
+
 
     const subTotal = useMemo(() => {
         if (cartItems === null) return 0;
@@ -133,10 +131,7 @@ export default function Cart() {
                                 </div>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
                                     <span>Total Quantities</span>
-                                    {
-                                        cartItems.length > 0 &&
-                                        <span> {totalQuantity} Items</span>
-                                    }
+                                    <span> {totalQuantity} Items</span>
                                 </div>
                                 <div className='flex items-center justify-between font-arimo gap-x-6'>
                                     <span>Sub Total</span>

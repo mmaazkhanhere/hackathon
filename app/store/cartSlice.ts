@@ -59,16 +59,22 @@ export const addCartItem = createAsyncThunk("cart/addCartItem", async (data: { p
     }
 });
 
-export const updateCart = createAsyncThunk("cart/updateCart", async (data: { product_name: string, quantity: number }) => {
-    try {
-        const res = await axios.patch(`/api/cart?product_name=${encodeURIComponent(data.product_name)}`, {
-            quantity: data.quantity
-        });
-        return res.data;
-    } catch (error) {
-        throw new Error("Cannot update product quantity!")
+export const updateCart = createAsyncThunk(
+    'cart/updateCart',
+    async (data: { product_name: string; quantity: number }, { rejectWithValue }) => {
+        try {
+            const res = await axios.patch(`/api/cart?product_name=${encodeURIComponent(data.product_name)}`, {
+                quantity: data.quantity,
+            });
+
+            const updatedCartItem = res.data;
+            return updatedCartItem;
+        } catch (error) {
+            // Return the error message in the rejected state
+            return rejectWithValue('Cannot update product quantity!');
+        }
     }
-})
+);
 
 export const deleteItem = createAsyncThunk("cart/deleteItem", async (data: { product_name: string }) => {
     try {
@@ -78,7 +84,6 @@ export const deleteItem = createAsyncThunk("cart/deleteItem", async (data: { pro
         throw new Error("Cannot delete item!")
     }
 })
-
 
 const cartSlice = createSlice({
     name: 'cart',
@@ -92,6 +97,7 @@ const cartSlice = createSlice({
     },
     extraReducers: (builder) => {
         //case for fetching item
+
         builder.addCase(getData.pending, (state) => {
             state.isLoading = true;
             state.error = null;
@@ -107,7 +113,9 @@ const cartSlice = createSlice({
             state.isLoading = false;
             state.error = "Cannot fetch data from the database";
         });
+
         //case for adding data into the cart
+
         builder.addCase(addCartItem.pending, (state, action) => {
             state.isLoading = true;
         })
@@ -127,22 +135,27 @@ const cartSlice = createSlice({
             state.isLoading = false;
             state.error = action.error
         })
+
         //case for updating item in the cart
+
         builder.addCase(updateCart.pending, (state) => {
             state.isLoading = true;
-        })
+        });
         builder.addCase(updateCart.fulfilled, (state, action) => {
-            // Update the cartItems array with the updated item quantity
-            const updatedItem = action.payload;
-            const existingItem = state.cartItems.find(item => item.product_name === updatedItem.product_name);
-            if (existingItem) {
-                existingItem.quantity = updatedItem.quantity;
-            }
+            state.isLoading = false;
+            // Update the cart item with the new data from the API response
+            const updatedCartItem = action.payload;
+            state.cartItems = state.cartItems.map((item) =>
+                item.product_name === updatedCartItem.product_name ? updatedCartItem : item
+            );
         });
         builder.addCase(updateCart.rejected, (state, action) => {
             state.isLoading = false;
-        })
+            // Handle the error state here, action.payload contains the error message
+        });
+
         //case for delete item
+
         builder.addCase(deleteItem.pending, (state) => {
             state.isLoading = true
         })

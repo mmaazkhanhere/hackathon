@@ -37,29 +37,34 @@ const CartItem: React.FC<ICartItems> = ({ item, database }) => {
     const oneQuantityPrice = item.price * 1;
     const quantityFromDatabase = product?.quantity || 0;
     const [itemQuantity, setItemQuantity] = useState<number>(quantityFromDatabase);
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const dispatch = useAppDispatch();
-    useEffect(() => {
-        handleQuantity(itemQuantity);
-    }, [itemQuantity]);
 
     const handleQuantity = async (newQuantity: number) => {
         try {
             const product = item.name;
+            setIsLoading(true)
             await dispatch(updateCart({ product_name: product, quantity: newQuantity }));
+            setIsLoading(false)
         } catch (error) {
-            console.error("Cannot update item: ", error)
+            console.error('Cannot update item: ', error);
+            setIsLoading(false)
         }
-    }
+    };
 
     const addQuantity = () => {
-        setItemQuantity(itemQuantity + 1);
-        handleQuantity(itemQuantity);
-    }
+        const newQuantity = itemQuantity + 1;
+        setItemQuantity(newQuantity);
+        handleQuantity(newQuantity);
+    };
 
     const removeQuantity = () => {
-        setItemQuantity(itemQuantity - 1)
-        handleQuantity(itemQuantity);
+        if (itemQuantity > 0) {
+            const newQuantity = itemQuantity - 1;
+            setItemQuantity(newQuantity);
+            handleQuantity(newQuantity); // Dispatch the updateCart action with the new quantity.
+        }
     };
 
     const notify = () => {
@@ -112,12 +117,13 @@ const CartItem: React.FC<ICartItems> = ({ item, database }) => {
                             <button className=' bg-gray-200 p-1 cursor-pointer rounded-full hover:bg-[#fdfdfc] hover:border 
                         hover:border-black text-[14px]'
                                 onClick={removeQuantity}
-                                disabled={itemQuantity == 1}>
+                                disabled={itemQuantity == 1 || isLoading}>
                                 -
                             </button>
                             <span className='font-medium'>{itemQuantity}</span>
                             <button className=' bg-gray-200 p-1 cursor-pointer rounded-full hover:bg-[#fdfdfc] 
                         hover:border hover:border-black text-[14px]'
+                                disabled={isLoading}
                                 onClick={addQuantity}>
                                 +
                             </button>
