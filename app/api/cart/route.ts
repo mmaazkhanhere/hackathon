@@ -41,7 +41,6 @@ export const POST = async (request: NextRequest) => {
         const productName = req.product_name;
         const quantity = req.quantity;
 
-        // Check if the item already exists in the user's cart
         const existingCartItem = await db.select({ quantity: cartTable.quantity })
             .from(cartTable)
             .where(and(eq(cartTable.product_name, productName), eq(cartTable.user_id, userId)))
@@ -63,7 +62,6 @@ export const POST = async (request: NextRequest) => {
                 price: req.price,
                 user_id: userId
             }).returning().execute();
-            console.log({ insertResult })
             return NextResponse.json({ insertResult });
         }
     } catch (error) {

@@ -50,7 +50,7 @@ export default function Cart() {
             setCartItems(itemsData as IProduct[]);
         };
 
-        // Fetch product data only when the "database" changes (i.e., when a new item is added or a cart item is deleted)
+        // Fetch product data only when the "database" changes
         fetchProductItems();
     }, [database]);
 

@@ -38,7 +38,7 @@ export const getData = createAsyncThunk("cart/getData", async (userId: string) =
 });
 
 
-export const addCartItem = createAsyncThunk("cart/addCartItem", async (data: { product_name: string, quantity: number, price: number }, { getState }) => {
+export const addCartItem = createAsyncThunk("cart/addCartItem", async (data: { product_name: string, quantity: number, price: number }) => {
     try {
         await axios.post("/api/cart", {
             product_name: data.product_name,
@@ -106,7 +106,7 @@ const cartSlice = createSlice({
         builder.addCase(getData.fulfilled, (state, action) => {
             state.isLoading = false;
             state.error = null;
-            state.cartItems = action.payload.items; // Assuming the data is an object with an "items" property
+            state.cartItems = action.payload.items;
         });
 
         builder.addCase(getData.rejected, (state, action) => {
@@ -151,7 +151,6 @@ const cartSlice = createSlice({
         });
         builder.addCase(updateCart.rejected, (state, action) => {
             state.isLoading = false;
-            // Handle the error state here, action.payload contains the error message
         });
 
         //case for delete item

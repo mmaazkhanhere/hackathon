@@ -71,7 +71,6 @@ export default function Product({ params }: { params: { slug: string } }) {
             );
             setIsLoading(false)
         } catch (error) {
-            // Handle error here if needed
             console.error("Error adding item to cart:", error);
         }
     };
