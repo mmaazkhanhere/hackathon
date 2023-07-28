@@ -1,12 +1,18 @@
 import { authMiddleware } from "@clerk/nextjs";
 
 export default authMiddleware({
-    publicRoutes: ['/api/cart/get'],
+    publicRoutes: ["/", "/products", "/female", "/male", "/all_products", "/api/cart/:path*", "/api/webhooks/:path*", "/studio/:path*"],
 });
 
 export const config = {
-    matcher: ['/cart', '/success', '/api/cart', '/api/stripe-session']
-}
+    matcher: [
+        "/((?!.*\\..*|_next).*)",
+        "/",
+        "/api/cart/:path*",
+        "/products/:path*,/studio/:path*",
+        "/(api|trpc)(.*)",
+    ],
+};
 
 // import { authMiddleware } from "@clerk/nextjs";
 

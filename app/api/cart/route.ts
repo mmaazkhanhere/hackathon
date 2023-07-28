@@ -27,8 +27,6 @@ export const GET = async (request: NextRequest) => {
     }
 };
 
-
-
 export const POST = async (request: NextRequest) => {
     const req = await request.json();
 
